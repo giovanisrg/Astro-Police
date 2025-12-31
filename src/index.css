@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Design Philosophy: Sci-Fi Corporativo Espacial
+   - Base: Azul profundo espacial (#0A1628) representando o vazio do espaço
+   - Acentos: Ciano elétrico (#00D9FF) para interatividade, Laranja (#FF6B35) para CTAs
+   - Tipografia: Orbitron (display/títulos), Inter (corpo)
+   - Efeitos: Glassmorphism, glow, profundidade z-axis
+*/
+
+
+
+:root {
+  /* Tema Dark Espacial - Valores em HSL para compatibilidade com Tailwind */
+
+  /* Background - Azul espacial profundo */
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+
+  /* Card - Glassmorphism */
+  --card: 222 47% 15%;
+  --card-foreground: 210 40% 98%;
+
+  /* Popover */
+  --popover: 222 47% 13%;
+  --popover-foreground: 210 40% 98%;
+
+  /* Primary - Ciano elétrico */
+  --primary: 195 100% 50%;
+  --primary-foreground: 222 47% 11%;
+
+  /* Secondary - Azul médio */
+  --secondary: 222 47% 20%;
+  --secondary-foreground: 210 40% 98%;
+
+  /* Muted */
+  --muted: 222 47% 18%;
+  --muted-foreground: 215 20% 65%;
+
+  /* Accent - Laranja de alerta */
+  --accent: 14 100% 60%;
+  --accent-foreground: 210 40% 98%;
+
+  /* Destructive */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+
+  /* Borders - Ciano translúcido */
+  --border: 222 47% 25%;
+  --input: 222 47% 25%;
+  --ring: 195 100% 50%;
+
+  /* Charts - Gradiente de azuis espaciais */
+  --chart-1: 220 70% 50%;
+  --chart-2: 210 65% 55%;
+  --chart-3: 200 70% 60%;
+  --chart-4: 195 75% 65%;
+  --chart-5: 190 80% 70%;
+
+  --radius: 0.75rem;
+}
+
+.dark {
+  /* Mantém os mesmos valores para modo dark */
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+  --card: 222 47% 15%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222 47% 13%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 195 100% 50%;
+  --primary-foreground: 222 47% 11%;
+  --secondary: 222 47% 20%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 222 47% 18%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 14 100% 60%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 222 47% 25%;
+  --input: 222 47% 25%;
+  --ring: 195 100% 50%;
+  --chart-1: 220 70% 50%;
+  --chart-2: 210 65% 55%;
+  --chart-3: 200 70% 60%;
+  --chart-4: 195 75% 65%;
+  --chart-5: 190 80% 70%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    letter-spacing: 0.02em;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  a[href],
+  select:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    @apply cursor-pointer;
+  }
+}
+
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+
+  /* Glassmorphism effect */
+  .glass {
+    background: hsl(222 47% 15% / 0.4);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(195 100% 50% / 0.2);
+  }
+
+  /* Glow effect para elementos interativos */
+  .glow {
+    box-shadow: 0 0 20px hsl(195 100% 50% / 0.3);
+  }
+
+  .glow-hover {
+    transition: box-shadow 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  .glow-hover:hover {
+    box-shadow: 0 0 30px hsl(195 100% 50% / 0.5);
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+      max-width: 1400px;
+    }
+  }
+}
