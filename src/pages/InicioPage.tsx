@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
-import { BannerData, INITIAL_BANNER_DATA } from "@/data/initialData";
+import { BannerData } from "@/data/initialData";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 
