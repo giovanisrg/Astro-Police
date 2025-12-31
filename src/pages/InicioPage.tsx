@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Shield, Edit } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,12 +9,88 @@ import { Header } from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import { BannerData, INITIAL_BANNER_DATA } from "@/data/initialData";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 export default function InicioPage() {
     const [, setLocation] = useLocation();
     const { user } = useAuth();
-    const [bannerData, setBannerData] = useState<BannerData>(INITIAL_BANNER_DATA);
+
+    // State initialized with safe defaults, will be populated by DB
+    const [bannerData, setBannerData] = useState<BannerData>({
+        status: 'aberto',
+        titulo: 'CARREGANDO...',
+        subtitulo: 'Aguarde um momento...',
+        gifUrl: ''
+    });
+
     const [isEditingBanner, setIsEditingBanner] = useState(false);
+
+    // --- SUPABASE SYNC LOGIC ---
+    useEffect(() => {
+        // 1. Fetch Initial Data
+        const fetchBanner = async () => {
+            const { data } = await supabase
+                .from('banner_settings')
+                .select('*')
+                .single();
+
+            if (data) {
+                setBannerData({
+                    status: data.status as 'aberto' | 'fechado',
+                    titulo: data.titulo,
+                    subtitulo: data.subtitulo,
+                    gifUrl: data.image_url
+                });
+            }
+        };
+
+        fetchBanner();
+
+        // 2. Subscribe to Realtime Changes
+        const subscription = supabase
+            .channel('banner_realtime')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'banner_settings' }, (payload) => {
+                const newData = payload.new;
+                toast.info("Status de Inscrições Atualizado!");
+                setBannerData({
+                    status: newData.status,
+                    titulo: newData.titulo,
+                    subtitulo: newData.subtitulo,
+                    gifUrl: newData.image_url
+                });
+            })
+            .subscribe();
+
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, []);
+
+    // 3. Save Function
+    const handleSave = async (newData: BannerData) => {
+        // Optimistic UI Update
+        setBannerData(newData);
+        setIsEditingBanner(false);
+
+        try {
+            const { error } = await supabase
+                .from('banner_settings')
+                .update({
+                    status: newData.status,
+                    titulo: newData.titulo,
+                    subtitulo: newData.subtitulo,
+                    image_url: newData.gifUrl,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', 1);
+
+            if (error) throw error;
+            toast.success("Banner atualizado globalmente!");
+        } catch (error) {
+            console.error(error);
+            toast.error("Erro ao salvar no banco de dados.");
+        }
+    };
 
     return (
         <div className="min-h-screen pt-16">
@@ -71,11 +147,15 @@ export default function InicioPage() {
                                     className="absolute top-4 right-4 border-primary/50 bg-background/80 backdrop-blur"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setIsEditingBanner(!isEditingBanner);
+                                        if (isEditingBanner) {
+                                            handleSave(bannerData); // Salvar ao clicar no botão
+                                        } else {
+                                            setIsEditingBanner(true);
+                                        }
                                     }}
                                 >
                                     <Edit className="w-4 h-4 mr-2" />
-                                    {isEditingBanner ? 'Salvar' : 'Editar'}
+                                    {isEditingBanner ? 'Salvar Alterações' : 'Editar Banner'}
                                 </Button>
                             )}
 
@@ -97,6 +177,12 @@ export default function InicioPage() {
                                                         ...newData,
                                                         titulo: "INSCRIÇÕES ENCERRADAS",
                                                         subtitulo: "Não há vagas disponíveis no momento. Novas inscrições serão divulgadas por meio dos canais oficiais do discord AstroRP. https://discord.gg/AstroRP"
+                                                    };
+                                                } else {
+                                                    newData = {
+                                                        ...newData,
+                                                        titulo: "RECRUTAMENTO ABERTO",
+                                                        subtitulo: "Junte-se à elite da segurança espacial."
                                                     };
                                                 }
 
