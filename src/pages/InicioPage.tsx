@@ -181,8 +181,8 @@ export default function InicioPage() {
                                                 } else {
                                                     newData = {
                                                         ...newData,
-                                                        titulo: "RECRUTAMENTO ABERTO",
-                                                        subtitulo: "Junte-se à elite da segurança espacial."
+                                                        titulo: "INSCRIÇÕES ABERTAS",
+                                                        subtitulo: "Venha fazer parte da elite da Astro Police. Sua jornada começa aqui."
                                                     };
                                                 }
 
