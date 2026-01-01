@@ -1,6 +1,6 @@
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Shield, Edit } from "lucide-react";
+import { Edit } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -252,7 +252,7 @@ export default function InicioPage() {
                 <div className="container">
                     <div className="flex flex-col items-center gap-4">
                         <div className="flex items-center gap-3">
-                            <Shield className="w-8 h-8 text-primary" />
+                            <img src="/img/logo.png" alt="Astro Police" className="w-10 h-10 object-contain" />
                             <span className="text-xl font-bold text-foreground">ASTRO POLICE</span>
                         </div>
                         <p className="text-sm text-muted-foreground text-center">
