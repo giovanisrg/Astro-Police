@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 import { toast } from 'sonner';
 
 // Tipos de Patente/Cargo
-export type Rank = 'Civil' | 'Recruta' | 'Soldado' | 'Sargento' | 'Subtenente' | 'Capitão' | 'Major';
+export type Rank = 'Civil' | 'Recruta' | 'Soldado' | 'cabo' | 'Sargento' | 'Sargento 2' | 'Sargento 3' | 'Subtenente' | 'Tenente 1' | 'Tenente 2' | 'Capitão' | 'Major' | 'Sub-Comando';
 
 // Tipos de Instrutor
 // Tipos de Instrutor
