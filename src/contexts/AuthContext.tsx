@@ -199,8 +199,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         // Calcular Patente Real baseada nos cargos
-        let currentRank: Rank = 'Recruta';
-        let currentLevel = RANK_LEVELS['Recruta'];
+        let currentRank: Rank = 'Civil';
+        let currentLevel = RANK_LEVELS['Civil'];
 
         // Ordenar patentes por nível (do maior para o menor) para pegar a mais alta
         const sortedPatentes = [...ROLE_CONFIG.PATENTES].sort((a, b) => b.level - a.level);
