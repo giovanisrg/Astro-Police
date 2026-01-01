@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { Shield, LogIn, LogOut, GraduationCap } from "lucide-react";
+import { LogIn, LogOut, GraduationCap } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import {
