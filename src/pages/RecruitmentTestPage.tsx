@@ -159,7 +159,7 @@ export default function RecruitmentTestPage() {
                 description = `O conscrito **${recruitName}** (ID: ${recruitId}) foi considerado **APTO** e aprovado no processo de recrutamento, tendo atendido aos requisitos físicos, técnicos e disciplinares.\n\nAutorizado a prosseguir para a formação a partir de **${dataFormatada}**.`;
             } else if (finalStatus === "LN") {
                 title = "Inclusão em Lista Restritiva";
-                description = `O conscrito **${recruitName}** **${recruitId}** foi incluído na Lista Negra da Corporação em razão de conduta incompatível com os princípios de disciplina, hierarquia e ética exigidos durante o processo de recrutamento. Em decorrência desta decisão, o referido encontra-se impedido de participar de novos processos seletivos, cursos ou atividades institucionais, pelo período determinado pelo Comando, conforme regulamentação vigente.`;
+                description = `O conscrito **"${recruitName}"** ID **"${recruitId}"** foi incluído na Lista Negra da Corporação em razão de conduta incompatível com os princípios de disciplina, hierarquia e ética exigidos durante o processo de recrutamento. Em decorrência desta decisão, o referido encontra-se impedido de participar de novos processos seletivos, cursos ou atividades institucionais, pelo período determinado pelo Comando, conforme regulamentação vigente.`;
             } else {
                 title = "🚫 Reprovação do Recrutamento Policial";
                 description = `O candidato **${recruitName}** (ID: ${recruitId}) foi considerado **INAPTO** no processo de recrutamento policial, por não atender aos critérios estabelecidos.\n\nImpedido de prosseguir para as fases subsequentes.`;
