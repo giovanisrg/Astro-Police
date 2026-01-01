@@ -19,7 +19,7 @@ export const WEBHOOK_CONFIG = {
     GUARNICOES: {
         GRA: "https://discord.com/api/webhooks/1455618826262806642/96rcSVTt84jRSlSDK_bj8VrLSksajEkeU1UznwpkorNWdXdh5je49vIoBYWRPyntCOxx",
         SWAT: "https://discord.com/api/webhooks/1455618940935078073/Guff5ZHbHL2b2ehkqXIuzOQiGHxqkpRPqGCM7Rl3dQo7ns9W5fkP_QPdzVKpJjMzsiqQ",
-        GTM: "https://discord.com/api/webhooks/1455618348434984962/200rERE5gbyG3QpeJYBsLaeK1mz-zKWveejgHv4z6Wxk8SEB2KQVRnLOH5dora70Fyv_",
+        GTM: "https://discord.com/api/webhooks/1456401779523584204/IaNMY3RDsTbfdKu0j89QNuI1Kg4RjFgWYxCc858roWOcOG60JRYwEcVOoKxBOl3QQ7Fq",
         SPEED: "https://discord.com/api/webhooks/1455618651582500926/TcCsSJd6vsmVTIF5ZwI1Nj9momn2BuGNd4rPa0rn09wFgWawpBX--OsFT1zV4mo5WU8w"
     }
 };
