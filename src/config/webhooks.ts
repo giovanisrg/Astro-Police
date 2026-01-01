@@ -11,9 +11,9 @@ export const WEBHOOK_CONFIG = {
     GERAL: "https://discord.com/api/webhooks/1455617875443454022/RND8X9HjjVoLJhUmX1j75E0Lhpx3wYA5YHYc4iMOESkqwctm-ERopfHyDJ9X0dI29HwS",
 
     // Webhooks para o Sistema de Recrutamento
-    RECRUTAMENTO_APTO: "https://discord.com/api/webhooks/1323319086884618335/O2o5Z2gJ0VwRk7M-Fk4C_v_D3sQ3a6g8b9c0d1e2f3g4h5i6j7k8l9m0n1o2p3q",
+    RECRUTAMENTO_APTO: "https://discord.com/api/webhooks/1455956319092609107/vYnczj9PGgz5_Z5m_JA4esTuIV0oi8idyE1ETBooRCt45hvcRlWSKlD7prrq1s_xJH9y",
     RECRUTAMENTO_INAPTO: "https://discord.com/api/webhooks/1323321591890661479/Z2o5Z2gJ0VwRk7M-Fk4C_v_D3sQ3a6g8b9c0d1e2f3g4h5i6j7k8l9m0n1o2p3q",
-    RECRUTAMENTO_LN: "https://discord.com/api/webhooks/1455980379369377795/JyNna-m2WLnoo3PUS_jF58XF4u2y_YB908HNvBho8jbVGf-71irKPOfAYGgRGqDI_jVg", // Novo Webhook para Lista NegrajsGLT3TXb1JtNMUd06rTWx_lIl3rFMZyJmnRWPeJI6WoZmxBJwrXX0Tb",
+    RECRUTAMENTO_LN: "https://discord.com/api/webhooks/1455980379369377795/JyNna-m2WLnoo3PUS_jF58XF4u2y_YB908HNvBho8jbVGf-71irKPOfAYGgRGqDI_jVg", // Novo Webhook para Lista Negra
 
     // Canais Específicos por Guarnição
     GUARNICOES: {
