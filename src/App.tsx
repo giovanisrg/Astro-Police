@@ -9,6 +9,7 @@ import InicioPage from "./pages/InicioPage";
 import EnrollmentPage from "./pages/EnrollmentPage";
 import RecruitmentTestPage from "./pages/RecruitmentTestPage";
 import RecruitmentResultsPage from "./pages/RecruitmentResultsPage";
+import ManualPage from "./pages/ManualPage";
 import RecruitmentQuestionsPage from "./pages/RecruitmentQuestionsPage";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -25,6 +26,7 @@ function Router() {
       <Route path={"/recrutamento/prova"} component={RecruitmentTestPage} />
       <Route path={"/recrutamento/resultados"} component={RecruitmentResultsPage} />
       <Route path={"/recrutamento/perguntas"} component={RecruitmentQuestionsPage} />
+      <Route path="/manual/:manualId" component={ManualPage} />
 
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
