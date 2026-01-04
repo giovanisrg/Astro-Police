@@ -32,6 +32,8 @@ export default function ManualPage() {
     const [match, params] = useRoute("/manual/:manualId");
     const manualId = match && params ? params.manualId : "gra";
 
+    const { user } = useAuth();
+
     // Back button handler
     const handleBack = () => {
         window.history.back();
