@@ -30,16 +30,18 @@ export default function InicioPage() {
                 .eq('key', 'banner_home')
                 .single();
 
-            if (data?.value) {
+            if (data?.value && data.value.status) {
                 setBannerData(data.value);
             } else {
-                // DB is empty or key missing -> Auto-Seed
-                console.log("Banner config missing in DB. Auto-seeding initial data...");
+                // DB data is invalid or missing -> Force Auto-Seed
+                console.log("Banner config missing or invalid. Auto-seeding...");
                 await supabase.from('app_settings').upsert({
                     key: 'banner_home',
                     value: INITIAL_BANNER_DATA,
                     updated_at: new Date().toISOString()
                 });
+                // Ensure UI shows default
+                setBannerData(INITIAL_BANNER_DATA);
             }
         };
 
