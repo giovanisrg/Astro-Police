@@ -14,6 +14,7 @@ import { supabase } from "@/lib/supabase";
 export default function InicioPage() {
     const [, setLocation] = useLocation();
     const { user } = useAuth();
+    console.log("AstroPolice Version: Banner Fix 2.0"); // Debug Log for User
 
     // State initialized with original data (Safe Default)
     const [bannerData, setBannerData] = useState<BannerData>(INITIAL_BANNER_DATA);
