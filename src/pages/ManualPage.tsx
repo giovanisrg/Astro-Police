@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useRoute, useLocation } from "wouter";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -28,9 +28,17 @@ const INITIAL_MANUAL: ManualData = {
 };
 
 export default function ManualPage() {
-    const { manualId } = useParams();
-    const { user } = useAuth();
-    const navigate = useNavigate();
+    // wouter integration
+    const [match, params] = useRoute("/manual/:manualId");
+    const manualId = match && params ? params.manualId : "gra";
+    const [, setLocation] = useLocation();
+
+    const { user } = useAuth(); // navigate unused from router, use setLocation if needed or window.history
+
+    // Back button handler
+    const handleBack = () => {
+        window.history.back();
+    };
 
     const [data, setData] = useState<ManualData>(INITIAL_MANUAL);
     const [isLoading, setIsLoading] = useState(true);
@@ -106,7 +114,7 @@ export default function ManualPage() {
         <div className="min-h-screen bg-[#0a0a0a] text-[#e0e0e0] font-sans overflow-y-auto">
             {/* Toolbar */}
             <div className="fixed top-0 left-0 right-0 h-16 bg-black/80 backdrop-blur border-b border-primary/20 flex items-center justify-between px-6 z-50 rounded-b-xl">
-                <Button variant="ghost" className="text-muted-foreground hover:text-primary" onClick={() => navigate(-1)}>
+                <Button variant="ghost" className="text-muted-foreground hover:text-primary" onClick={handleBack}>
                     <ArrowLeft className="w-5 h-5 mr-2" />
                     Voltar
                 </Button>
