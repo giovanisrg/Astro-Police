@@ -108,7 +108,7 @@ export const INITIAL_CURSOS_GUARNICAO: Curso[] = [
             "Procedimentos de emergência"
         ],
         cargaHoraria: "Especialização",
-        pdf: "/pdfs/gra.pdf",
+        pdf: "/gra_manual.html",
         nivel: "Entrada",
         minLevel: 1, // Soldado+ pode ver especialização
         guarnicao: "GRA" // Curso da guarnição GRA
