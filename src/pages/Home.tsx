@@ -309,8 +309,10 @@ export default function Home() {
     try {
       const { error } = await supabase.from('courses').upsert(dbPayload);
       if (error) throw error;
+
       toast.success("Curso salvo com sucesso!");
       setEditorState(prev => ({ ...prev, isOpen: false }));
+      fetchCourses(); // Update list immediately
     } catch (err) {
       console.error(err);
       toast.error("Erro ao salvar curso.");
@@ -322,7 +324,9 @@ export default function Home() {
       try {
         const { error } = await supabase.from('courses').delete().eq('id', id);
         if (error) throw error;
+
         toast.success("Curso removido.");
+        fetchCourses(); // Update list immediately
       } catch (err) {
         console.error(err);
         toast.error("Erro ao deletar curso.");
