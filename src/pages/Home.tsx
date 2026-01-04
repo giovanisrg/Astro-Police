@@ -199,12 +199,28 @@ function CursoCard({ curso, isEditing, onEdit, onDelete }: CursoCardProps) {
 
 
 
+import { supabase } from "@/lib/supabase";
+
+// Helper: Map DB snake_case columns to App camelCase interface
+const mapDbToCurso = (dbRow: any): Curso => ({
+  id: dbRow.id,
+  nome: dbRow.nome,
+  descricao: dbRow.descricao,
+  modulos: dbRow.modulos || [],
+  cargaHoraria: dbRow.carga_horaria,
+  pdf: dbRow.pdf_url,
+  minLevel: dbRow.min_level,
+  progressao: dbRow.progressao,
+  guarnicao: dbRow.guarnicao_tag as any,
+  nivel: dbRow.min_level === 0 ? "Básico" : "Avançado" // Derived for UI
+});
+
 export default function Home() {
   const { user } = useAuth();
 
   // Data States
-  const [cursosObrigatorios, setCursosObrigatorios] = useState<Curso[]>(INITIAL_CURSOS_OBRIGATORIOS);
-  const [cursosGuarnicao, setCursosGuarnicao] = useState<Curso[]>(INITIAL_CURSOS_GUARNICAO);
+  const [cursosObrigatorios, setCursosObrigatorios] = useState<Curso[]>([]);
+  const [cursosGuarnicao, setCursosGuarnicao] = useState<Curso[]>([]);
 
   // Editing States
   const [isEditing, setIsEditing] = useState(false);
@@ -214,37 +230,103 @@ export default function Home() {
     type: 'obrigatorio'
   });
 
+  // Fetch Data from Supabase
+  const fetchCourses = async () => {
+    try {
+      const { data, error } = await supabase.from('courses').select('*');
+      if (error) throw error;
 
+      // Auto-Seed if empty (Migration Strategy)
+      if (!data || data.length === 0) {
+        console.log("Database empty. Seeding initial data...");
+        const seedData = [
+          ...INITIAL_CURSOS_OBRIGATORIOS.map(c => ({
+            id: c.id, nome: c.nome, descricao: c.descricao, modulos: c.modulos,
+            carga_horaria: c.cargaHoraria, pdf_url: c.pdf, min_level: c.minLevel,
+            progressao: c.progressao, tipo: 'obrigatorio'
+          })),
+          ...INITIAL_CURSOS_GUARNICAO.map(c => ({
+            id: c.id, nome: c.nome, descricao: c.descricao, modulos: c.modulos,
+            carga_horaria: c.cargaHoraria, pdf_url: c.pdf, min_level: c.minLevel,
+            progressao: c.progressao, tipo: 'guarnicao', guarnicao_tag: c.guarnicao
+          }))
+        ];
+
+        const { error: seedError } = await supabase.from('courses').insert(seedData);
+        if (seedError) console.error("Error seeding:", seedError);
+        else fetchCourses(); // Retry fetch after seed
+        return;
+      }
+
+      // Distribute courses
+      const obrigatorios = data.filter(c => c.tipo === 'obrigatorio').map(mapDbToCurso);
+      const guarnicao = data.filter(c => c.tipo === 'guarnicao').map(mapDbToCurso);
+
+      setCursosObrigatorios(obrigatorios);
+      setCursosGuarnicao(guarnicao);
+
+    } catch (err) {
+      console.error("Error fetching courses:", err);
+      toast.error("Erro ao carregar cursos.");
+    }
+  };
+
+  useEffect(() => {
+    fetchCourses();
+
+    // Subscribe to realtime changes
+    const channel = supabase.channel('courses_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'courses' }, () => {
+        fetchCourses();
+      })
+      .subscribe();
+
+    return () => { channel.unsubscribe(); };
+  }, []);
 
   // CRUD Handlers
   const openEditor = (curso: Curso | null, type: 'obrigatorio' | 'guarnicao') => {
     setEditorState({ isOpen: true, curso, type });
   };
 
-  const handleSaveCourse = (savedCurso: Curso) => {
-    const { type, curso: originalCurso } = editorState;
+  const handleSaveCourse = async (savedCurso: Curso) => {
+    const { type } = editorState;
 
-    const updateList = (list: Curso[], setList: React.Dispatch<React.SetStateAction<Curso[]>>) => {
-      if (originalCurso) {
-        // Edit
-        setList(list.map(c => c.id === savedCurso.id ? savedCurso : c));
-      } else {
-        // Create
-        setList([...list, savedCurso]);
-      }
+    // Prepare Payload for DB
+    const dbPayload = {
+      id: savedCurso.id,
+      nome: savedCurso.nome,
+      descricao: savedCurso.descricao,
+      modulos: savedCurso.modulos,
+      carga_horaria: savedCurso.cargaHoraria,
+      pdf_url: savedCurso.pdf,
+      min_level: savedCurso.minLevel,
+      progressao: savedCurso.progressao,
+      tipo: type, // 'obrigatorio' or 'guarnicao'
+      guarnicao_tag: savedCurso.guarnicao
     };
 
-    if (type === 'obrigatorio') updateList(cursosObrigatorios, setCursosObrigatorios);
-    else updateList(cursosGuarnicao, setCursosGuarnicao);
-
-    setEditorState(prev => ({ ...prev, isOpen: false }));
+    try {
+      const { error } = await supabase.from('courses').upsert(dbPayload);
+      if (error) throw error;
+      toast.success("Curso salvo com sucesso!");
+      setEditorState(prev => ({ ...prev, isOpen: false }));
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao salvar curso.");
+    }
   };
 
-  const handleDeleteCourse = (id: string, type: 'obrigatorio' | 'guarnicao') => {
-    if (confirm("Tem certeza que deseja remover este curso?")) {
-      if (type === 'obrigatorio') setCursosObrigatorios(prev => prev.filter(c => c.id !== id));
-      else setCursosGuarnicao(prev => prev.filter(c => c.id !== id));
-      toast.success("Curso removido com sucesso.");
+  const handleDeleteCourse = async (id: string, type: 'obrigatorio' | 'guarnicao') => {
+    if (confirm("Tem certeza que deseja remover este curso? A ação é irreversível.")) {
+      try {
+        const { error } = await supabase.from('courses').delete().eq('id', id);
+        if (error) throw error;
+        toast.success("Curso removido.");
+      } catch (err) {
+        console.error(err);
+        toast.error("Erro ao deletar curso.");
+      }
     }
   };
 
