@@ -31,7 +31,7 @@ export default function ManualPage() {
     // wouter integration
     const [match, params] = useRoute("/manual/:manualId");
     const manualId = match && params ? params.manualId : "gra";
-    const [, setLocation] = useLocation();
+    // const [, setLocation] = useLocation(); // Unused, removing to fix build error
 
     const { user } = useAuth(); // navigate unused from router, use setLocation if needed or window.history
 
