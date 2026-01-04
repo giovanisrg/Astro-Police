@@ -275,13 +275,18 @@ export default function Home() {
     fetchCourses();
 
     // Subscribe to realtime changes
+    // Subscribe to realtime changes
     const channel = supabase.channel('courses_changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'courses' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'courses' }, (payload) => {
+        console.log("Realtime update received:", payload);
+        toast.info("Lista de cursos atualizada!");
         fetchCourses();
       })
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Supabase Realtime Status:", status);
+      });
 
-    return () => { channel.unsubscribe(); };
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   // CRUD Handlers
