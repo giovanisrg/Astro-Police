@@ -89,6 +89,22 @@ export default function EnrollmentPage() {
 
     useEffect(() => {
         fetchData();
+
+        // Realtime Subscription
+        const channel = supabase.channel('enrollment_realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'study_materials' }, (payload) => {
+                console.log("Study materials updated:", payload);
+                toast.info("Materiais atualizados em tempo real!");
+                fetchData();
+            })
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'app_settings', filter: "key=eq.recrutamento_info" }, (payload) => {
+                console.log("Recruitment info updated:", payload);
+                toast.info("Informações atualizadas em tempo real!");
+                fetchData();
+            })
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); };
     }, []);
 
     // Funções de Gerenciamento de Info

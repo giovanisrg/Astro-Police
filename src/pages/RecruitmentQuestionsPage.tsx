@@ -32,6 +32,15 @@ export default function RecruitmentQuestionsPage() {
     useEffect(() => {
         if (hasAccess) {
             fetchQuestions();
+
+            const channel = supabase.channel('questions_realtime')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'recruitment_questions' }, () => {
+                    toast.info("Perguntas atualizadas!");
+                    fetchQuestions();
+                })
+                .subscribe();
+
+            return () => { supabase.removeChannel(channel); };
         }
     }, [user, hasAccess]);
 
