@@ -21,7 +21,7 @@ export default function EnrollmentPage() {
 
     // Estados
     const [infoRecrutamento, setInfoRecrutamento] = useState<InfoRecrutamento>(INITIAL_INFO_RECRUTAMENTO);
-    const [materiais, setMateriais] = useState<MaterialEstudo[]>([]);
+    const [materiais, setMateriais] = useState<MaterialEstudo[]>(INITIAL_MATERIAIS_ESTUDO);
     const [isEditingInfo, setIsEditingInfo] = useState(false);
 
     // Estado para novo/edição de material
@@ -41,6 +41,12 @@ export default function EnrollmentPage() {
 
             if (infoData?.value) {
                 setInfoRecrutamento(infoData.value);
+            } else {
+                // Auto-seed Info
+                await supabase.from('app_settings').upsert({
+                    key: 'recrutamento_info',
+                    value: INITIAL_INFO_RECRUTAMENTO
+                });
             }
 
             // 2. Fetch Study Materials
@@ -49,8 +55,8 @@ export default function EnrollmentPage() {
                 .select('*')
                 .order('ordem', { ascending: true });
 
-            if (matData) {
-                // Map DB columns to Frontend Interface if needed, or stick to interface
+            if (matData && matData.length > 0) {
+                // Map DB columns to Frontend Interface
                 const mappedMaterials = matData.map(m => ({
                     id: m.id,
                     titulo: m.titulo,
@@ -59,11 +65,24 @@ export default function EnrollmentPage() {
                     ordem: m.ordem
                 }));
                 setMateriais(mappedMaterials);
+            } else {
+                // Auto-seed Materials if empty
+                console.log("Seeding initial study materials...");
+                // Note: We don't map mappedMaterials here to state immediately to avoid flicker,
+                // but we insert into DB so next fetch works or realtime could pick it up.
+                // Actually, for immediate consistency, let's just insert.
+                const seedData = INITIAL_MATERIAIS_ESTUDO.map(m => ({
+                    titulo: m.titulo,
+                    descricao: m.descricao,
+                    pdf_url: m.pdf,
+                    ordem: m.ordem
+                }));
+                await supabase.from('study_materials').insert(seedData);
             }
 
         } catch (error) {
             console.error("Erro ao carregar dados:", error);
-            toast.error("Erro ao carregar informações.");
+            // Silent error mostly, as we fall back to initialData
         }
     };
 

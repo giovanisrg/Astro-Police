@@ -15,21 +15,16 @@ export default function InicioPage() {
     const [, setLocation] = useLocation();
     const { user } = useAuth();
 
-    // State initialized with safe defaults, will be populated by DB
-    const [bannerData, setBannerData] = useState<BannerData>({
-        status: 'aberto',
-        titulo: 'CARREGANDO...',
-        subtitulo: 'Aguarde um momento...',
-        gifUrl: ''
-    });
+    // State initialized with original data (Safe Default)
+    const [bannerData, setBannerData] = useState<BannerData>(INITIAL_BANNER_DATA);
 
     const [isEditingBanner, setIsEditingBanner] = useState(false);
 
     // --- SUPABASE SYNC LOGIC ---
     useEffect(() => {
-        // 1. Fetch Initial Data
+        // 1. Fetch Initial Data with Auto-Seed
         const fetchBanner = async () => {
-            const { data } = await supabase
+            const { data, error } = await supabase
                 .from('app_settings')
                 .select('value')
                 .eq('key', 'banner_home')
@@ -37,6 +32,14 @@ export default function InicioPage() {
 
             if (data?.value) {
                 setBannerData(data.value);
+            } else {
+                // DB is empty or key missing -> Auto-Seed
+                console.log("Banner config missing in DB. Auto-seeding initial data...");
+                await supabase.from('app_settings').upsert({
+                    key: 'banner_home',
+                    value: INITIAL_BANNER_DATA,
+                    updated_at: new Date().toISOString()
+                });
             }
         };
 
@@ -47,7 +50,6 @@ export default function InicioPage() {
             .channel('app_settings_changes')
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'app_settings', filter: "key=eq.banner_home" }, (payload) => {
                 const newData = payload.new.value;
-                toast.info("Status de Inscrições Atualizado!");
                 setBannerData(newData);
             })
             .subscribe();
