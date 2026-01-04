@@ -37,6 +37,16 @@ export default function RecruitmentResultsPage() {
 
     useEffect(() => {
         fetchResults();
+
+        // Realtime Subscription for Results
+        const channel = supabase.channel('results_realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'recruitment_results' }, () => {
+                toast.info("Resultados atualizados!");
+                fetchResults();
+            })
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); };
     }, []);
 
     const fetchResults = async () => {

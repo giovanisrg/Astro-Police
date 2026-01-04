@@ -33,6 +33,16 @@ export default function RecruitmentTestPage() {
 
     useEffect(() => {
         fetchQuestions();
+
+        // Realtime Subscription for Exam Questions
+        const channel = supabase.channel('exam_realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'recruitment_questions' }, () => {
+                toast.info("Prova atualizada pelo instrutor!");
+                fetchQuestions();
+            })
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); };
     }, []);
 
     const fetchQuestions = async () => {
