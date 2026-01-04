@@ -30,17 +30,13 @@ export default function InicioPage() {
         // 1. Fetch Initial Data
         const fetchBanner = async () => {
             const { data } = await supabase
-                .from('banner_settings')
-                .select('*')
+                .from('app_settings')
+                .select('value')
+                .eq('key', 'banner_home')
                 .single();
 
-            if (data) {
-                setBannerData({
-                    status: data.status as 'aberto' | 'fechado',
-                    titulo: data.titulo,
-                    subtitulo: data.subtitulo,
-                    gifUrl: data.image_url
-                });
+            if (data?.value) {
+                setBannerData(data.value);
             }
         };
 
@@ -48,16 +44,11 @@ export default function InicioPage() {
 
         // 2. Subscribe to Realtime Changes
         const subscription = supabase
-            .channel('banner_realtime')
-            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'banner_settings' }, (payload) => {
-                const newData = payload.new;
+            .channel('app_settings_changes')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'app_settings', filter: "key=eq.banner_home" }, (payload) => {
+                const newData = payload.new.value;
                 toast.info("Status de Inscrições Atualizado!");
-                setBannerData({
-                    status: newData.status,
-                    titulo: newData.titulo,
-                    subtitulo: newData.subtitulo,
-                    gifUrl: newData.image_url
-                });
+                setBannerData(newData);
             })
             .subscribe();
 
@@ -74,15 +65,12 @@ export default function InicioPage() {
 
         try {
             const { error } = await supabase
-                .from('banner_settings')
-                .update({
-                    status: newData.status,
-                    titulo: newData.titulo,
-                    subtitulo: newData.subtitulo,
-                    image_url: newData.gifUrl,
+                .from('app_settings')
+                .upsert({
+                    key: 'banner_home',
+                    value: newData,
                     updated_at: new Date().toISOString()
-                })
-                .eq('id', 1);
+                });
 
             if (error) throw error;
             toast.success("Banner atualizado globalmente!");
