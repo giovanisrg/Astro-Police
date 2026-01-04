@@ -176,7 +176,8 @@ export const INITIAL_BANNER_DATA: BannerData = {
     status: 'aberto',
     titulo: 'INSCRIÇÕES ABERTAS',
     subtitulo: 'Venha fazer parte da elite da Astro Police. Sua jornada começa aqui.',
-    linkDiscord: 'https://discord.gg/seu-servidor'
+    linkDiscord: 'https://discord.gg/seu-servidor',
+    gifUrl: '/img/banner_terrestre.png'
 };
 
 // Dados Iniciais: Informações de Recrutamento
