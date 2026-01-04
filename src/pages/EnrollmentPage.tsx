@@ -10,7 +10,8 @@ import { Edit, Save, Plus, Trash2, FileText, Download, MapPin, Clock, Info, Chec
 import {
     InfoRecrutamento,
     MaterialEstudo,
-    INITIAL_INFO_RECRUTAMENTO
+    INITIAL_INFO_RECRUTAMENTO,
+    INITIAL_MATERIAIS_ESTUDO
 } from "@/data/initialData";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
