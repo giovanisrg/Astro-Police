@@ -25,7 +25,7 @@ export default function InicioPage() {
     useEffect(() => {
         // 1. Fetch Initial Data with Auto-Seed
         const fetchBanner = async () => {
-            const { data, error } = await supabase
+            const { data, error: _error } = await supabase
                 .from('app_settings')
                 .select('value')
                 .eq('key', 'banner_home')
