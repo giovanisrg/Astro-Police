@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual GRA - Astro Police</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Orbitron:wght@700;900&display=swap');
+
+        :root {
+            --primary: #00f0ff;
+            --secondary: #7000ff;
+            --bg: #0a0a0a;
+            --text: #e0e0e0;
+            --surface: #131313;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            -webkit-print-color-adjust: exact;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 20px auto;
+            background: var(--surface);
+            padding: 20mm;
+            box-sizing: border-box;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            position: relative;
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: none;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .page {
+                width: 100%;
+                margin: 0;
+                box-shadow: none;
+                border: none;
+                page-break-after: always;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        .logo-area h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            margin: 0;
+            font-size: 24pt;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .logo-area p {
+            margin: 0;
+            color: #888;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 10pt;
+        }
+
+        .badge {
+            font-family: 'Orbitron', sans-serif;
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
+            padding: 5px 15px;
+            border: 1px solid var(--primary);
+            border-radius: 4px;
+            font-size: 10pt;
+        }
+
+        /* Content */
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: white;
+            border-left: 4px solid var(--secondary);
+            padding-left: 15px;
+            margin-top: 30px;
+            font-size: 16pt;
+            display: flex;
+            align-items: center;
+        }
+
+        h2 span {
+            color: var(--secondary);
+            margin-right: 10px;
+            opacity: 0.7;
+        }
+
+        p, li {
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        strong {
+            color: white;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        ul li::before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        .highlight-box {
+            background: rgba(112, 0, 255, 0.05);
+            border: 1px solid rgba(112, 0, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .warning-box {
+            background: rgba(255, 50, 50, 0.05);
+            border: 1px solid rgba(255, 50, 50, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20mm;
+            left: 20mm;
+            right: 20mm;
+            border-top: 1px solid #333;
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 8pt;
+            color: #666;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Button */
+        .download-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: black;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <button onclick="window.print()" class="download-btn no-print">
+        📠 Imprimir / Salvar PDF
+    </button>
+
+    <div class="page">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-area">
+                <h1>ASTRO POLICE</h1>
+                <p>Academia de Polícia • Divisão GRA</p>
+            </div>
+            <div class="badge">
+                MANUAL OFICIAL v2.0
+            </div>
+        </div>
+
+        <!-- Title -->
+        <div style="text-align: center; margin: 40px 0;">
+            <h1 style="font-family: 'Orbitron'; font-size: 28pt; margin: 0; color: white;">OPERAÇÕES AÉREAS</h1>
+            <p style="color: var(--primary); font-size: 14pt; margin-top: 10px;">GRUPO DE RESGATE E APOIO AÉREO</p>
+        </div>
+
+        <!-- Módulo 1 -->
+        <h2><span>01</span> Hierarquia e Responsabilidade</h2>
+        <p>Operamos com tripulação única (P1). A autonomia é total, mas a responsabilidade é absoluta.</p>
+        <div class="highlight-box">
+            <ul>
+                <li><strong>Cadeia de Comando:</strong> Comando Geral &gt; Sub-Comando &gt; Piloto (Você).</li>
+                <li><strong>Autoridade na Aeronave:</strong> Se o motor está ligado, o piloto manda. Se o piloto diz "não dá pra pousar", a ordem é final. A segurança da aeronave e da vida vem antes de qualquer patente.</li>
+            </ul>
+        </div>
+
+        <!-- Módulo 2 -->
+        <h2><span>02</span> Procedimentos Pré-Voo (Checklist)</h2>
+        <p>Garantia de que a máquina não vai falhar no meio do tiroteio.</p>
+        <ul>
+            <li><strong>Lataria e Hélices:</strong> Inspeção visual rápida. Sem fumaça preta ou faíscas visíveis.</li>
+            <li><strong>Combustível:</strong> Decolagem permitida APENAS com tanque cheio (100%).</li>
+            <li><strong>Equipamentos:</strong> Rádio sintonizado na frequência prioritária. Câmera Térmica operante.</li>
+        </ul>
+
+        <!-- Módulo 3 -->
+        <h2><span>03</span> Comunicação Tática (Qru Visual)</h2>
+        <p>Você é os "olhos de Deus". Sua comunicação deve pintar um quadro claro para quem está no chão.</p>
+        <div class="warning-box">
+            <p><strong>ERRADO:</strong> "Acho que ele virou ali na rua da loja rosa..."</p>
+            <p style="color: var(--primary); margin-top: 5px;"><strong>CERTO:</strong> "QTH: Vinewood Blvd. Direção NORTE. Veículo preto em alta velocidade."</p>
+        </div>
+        <p>Use pontos cardeais e referências fixas (bancos, praças, avenidas principais).</p>
+
+        <!-- Footer Page 1 -->
+        <div class="footer">
+            <span>ASTRO POLICE DEPT.</span>
+            <span>PÁGINA 1/2</span>
+        </div>
+    </div>
+
+    <!-- Page 2 -->
+    <div class="page">
+        <!-- Header Small -->
+        <div class="header" style="margin-bottom: 20px; padding-bottom: 10px;">
+            <div class="logo-area">
+                <p>CONTINUAÇÃO</p>
+            </div>
+        </div>
+
+        <!-- Módulo 4 -->
+        <h2><span>04</span> Técnicas de Perseguição</h2>
+        <p>O objetivo não é apenas seguir, é antecipar.</p>
+        <ul>
+            <li><strong>Altitude de Cruzeiro:</strong> Alto o suficiente para evitar colisão com prédios, baixo o suficiente para não perder o visual.</li>
+            <li><strong>Curva de Órbita:</strong> Nunca pare o helicóptero (hover) sobre o alvo. Voe em círculos largos para manter inércia.</li>
+            <li><strong>Predição:</strong> O helicóptero é mais rápido que o carro no trajeto direto. Corte caminho pelas diagonais.</li>
+        </ul>
+
+        <!-- Módulo 5 -->
+        <h2><span>05</span> Gerenciamento de Combustível</h2>
+        <p>A regra de ouro: Aeronave sem combustível vira um tijolo de 2 toneladas.</p>
+        <div class="highlight-box">
+            <ul>
+                <li><strong>50% de Tanque:</strong> Reporte obrigatório no rádio ("Águia com 50% de autonomia").</li>
+                <li><strong>25% de Tanque (BIN-GO):</strong> Abortar missão imediatamente. Retorno à base para reabastecimento.</li>
+                <li><strong>Pane Seca:</strong> Queda por falta de combustível resulta em <strong>Exulsão Imediata</strong> do GRA.</li>
+            </ul>
+        </div>
+
+        <!-- Módulo 6 -->
+        <h2><span>06</span> Regras de Engajamento</h2>
+        <ul>
+            <li><strong>Disparos:</strong> PROIBIDO atirar pilotando. Exceção: Código Vermelho autorizado pelo Comando Maior.</li>
+            <li><strong>Pouso em Ocorrência:</strong> Apenas em duas situações:
+                <ul>
+                    <li>Resgate Tático de oficial abatido ("Officer Down").</li>
+                    <li>Área segura (Code 4) para extração ou apoio.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <div style="margin-top: 50px; text-align: center; opacity: 0.5;">
+            <img src="/img/logo.png" style="width: 100px; filter: grayscale(1);">
+            <p style="font-size: 8pt; margin-top: 10px;">APROVADO PELO COMANDO GERAL</p>
+        </div>
+
+        <!-- Footer Page 2 -->
+        <div class="footer">
+            <span>ASTRO POLICE DEPT.</span>
+            <span>PÁGINA 2/2</span>
+        </div>
+    </div>
+
+</body>
+</html>
