@@ -5,7 +5,7 @@
  * - Tipografia: Orbitron (display), Inter (body)
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -317,7 +317,7 @@ export default function Home() {
     }
   };
 
-  const handleDeleteCourse = async (id: string, type: 'obrigatorio' | 'guarnicao') => {
+  const handleDeleteCourse = async (id: string, _type: 'obrigatorio' | 'guarnicao') => {
     if (confirm("Tem certeza que deseja remover este curso? A ação é irreversível.")) {
       try {
         const { error } = await supabase.from('courses').delete().eq('id', id);
