@@ -66,7 +66,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Static control to prevent multiple fetches in short time (React Strict Mode double mount protection)
     const lastFetchRef = React.useRef<number>(0);
     const isFetchingRef = React.useRef<boolean>(false);
-    const sessionRef = React.useRef<any>(null); // Store active session
 
     useEffect(() => {
         let mounted = true;
@@ -90,29 +89,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
             console.log("Auth Event:", event);
             if (session) {
-                sessionRef.current = session; // Store for interval
-                if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
+                // Avoid re-fetching if we just fetched (except for SIGNED_IN which is explicit)
+                if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
                     await handleUserSession(session);
+                } else if (event === 'INITIAL_SESSION') {
+                    // Initial session is usually handled by getSession() above, so we might skip or check if loaded
+                    // But to be safe, we can run it if isLoading is still true
+                    if (isLoading) await handleUserSession(session);
                 }
             } else {
-                sessionRef.current = null;
                 setUser(null);
                 setIsLoading(false);
             }
         });
 
-        // 3. Auto-Refresh Interval (every 45s)
-        const intervalId = setInterval(async () => {
-            if (sessionRef.current && !document.hidden) { // Only if tab is active
-                console.log("🔄 Auto-refreshing Discord permissions...");
-                await handleUserSession(sessionRef.current);
-            }
-        }, 45000);
-
         return () => {
             mounted = false;
             subscription.unsubscribe();
-            clearInterval(intervalId); // Cleanup
         };
     }, []);
 
@@ -134,8 +127,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             try {
                 // --- OPTIMIZATION & DEBOUNCE ---
                 const now = Date.now();
-                // Cache reduced to 40 seconds to allow auto-refresh
-                const CACHE_DURATION = 40 * 1000;
+                // Cache reduced to 2 minutes for faster response but safety against spam
+                const CACHE_DURATION = 2 * 60 * 1000;
                 // Debounce: Don't fetch if we fetched in the last 2 seconds (prevents Strict Mode double-invoke)
                 const DEBOUNCE_TIME = 2000;
 
