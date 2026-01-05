@@ -109,14 +109,28 @@ export default function ManualPage() {
         return text.split('\n\n').map((block, idx) => {
             // Check for list items
             if (block.trim().startsWith('- ')) {
-                const items = block.split('\n').filter(line => line.trim().startsWith('- '));
+                const lines = block.split('\n');
                 return (
                     <ul key={idx} className="list-none pl-5 my-4 space-y-2">
-                        {items.map((item, i) => (
-                            <li key={i} className="text-[#ccc] relative before:content-['•'] before:text-primary before:font-bold before:absolute before:-left-4">
-                                <span dangerouslySetInnerHTML={{ __html: parseBold(item.replace('- ', '')) }} />
-                            </li>
-                        ))}
+                        {lines.map((line, i) => {
+                            const trimmed = line.trim();
+                            if (!trimmed) return null;
+
+                            if (trimmed.startsWith('- ')) {
+                                return (
+                                    <li key={i} className="text-[#ccc] relative before:content-['•'] before:text-primary before:font-bold before:absolute before:-left-4">
+                                        <span dangerouslySetInnerHTML={{ __html: parseBold(trimmed.substring(2)) }} />
+                                    </li>
+                                );
+                            } else {
+                                // Sub-items or continuation lines (like "1. ...", "2. ...")
+                                return (
+                                    <li key={i} className="text-[#999] pl-4 text-sm mt-1">
+                                        <span dangerouslySetInnerHTML={{ __html: parseBold(trimmed) }} />
+                                    </li>
+                                );
+                            }
+                        })}
                     </ul>
                 );
             }
