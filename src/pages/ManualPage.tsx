@@ -289,6 +289,14 @@ export default function ManualPage() {
                         </Button>
                     )}
 
+                    {/* Official Seal */}
+                    <div className="mt-12 text-center opacity-50 flex flex-col items-center justify-center print:opacity-100">
+                        <img src="/img/logo.png" alt="Astro Police Logo" className="w-24 h-auto filter grayscale print:filter-none mb-3" />
+                        <p className="text-[10px] uppercase font-[Orbitron] tracking-widest text-muted-foreground print:text-gray-500">
+                            Aprovado pelo Comando Geral
+                        </p>
+                    </div>
+
                     {/* Footer */}
                     <div className="absolute bottom-[20mm] left-[20mm] right-[20mm] border-t border-[#333] pt-4 flex justify-between text-xs text-[#666] font-[Orbitron] print:bottom-0 print:left-0 print:right-0 print:border-black print:text-black">
                         <span>ASTRO POLICE DEPT.</span>
