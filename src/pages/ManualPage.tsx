@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Loader2, Save, ArrowLeft, Edit2 } from "lucide-react";
+import { Loader2, Save, Edit2 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { ROLE_CONFIG } from "@/config/roles";
