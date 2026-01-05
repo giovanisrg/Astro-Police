@@ -198,107 +198,110 @@ export default function ManualPage() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="w-full max-w-[210mm] min-h-[297mm] bg-[#131313] border border-[#333] shadow-2xl p-[20mm] relative rounded-lg print:shadow-none print:border-none print:w-full print:max-w-none print:bg-white print:text-black print:min-h-0"
+                    className="w-full max-w-[210mm] min-h-[297mm] bg-[#131313] border border-[#333] shadow-2xl p-[20mm] relative rounded-lg flex flex-col print:shadow-none print:border-none print:w-full print:max-w-none print:bg-white print:text-black print:min-h-0"
                 >
-                    {/* Header */}
-                    <div className="flex justify-between items-center border-b-2 border-primary pb-5 mb-10 print:border-black">
-                        <div>
-                            <h1 className="font-[Orbitron] text-primary text-2xl tracking-wide font-bold print:text-black">ASTRO POLICE</h1>
-                            <p className="text-[#888] tracking-[0.2em] text-xs uppercase print:text-gray-600">Academia de Polícia • Divisão {manualId?.toUpperCase()}</p>
-                        </div>
-                        <div className="font-[Orbitron] bg-primary/10 text-primary px-4 py-1 border border-primary rounded text-sm print:border-black print:text-black print:bg-transparent">
-                            MANUAL OFICIAL v3.0
-                        </div>
-                    </div>
-
-                    {/* Title */}
-                    <div className="text-center mb-12">
-                        {isEditing ? (
-                            <div className="space-y-4">
-                                <Input
-                                    value={data.title}
-                                    onChange={(e) => setData({ ...data, title: e.target.value })}
-                                    className="text-center text-3xl font-[Orbitron] font-bold bg-transparent border-primary/50 h-auto py-2"
-                                />
-                                <Input
-                                    value={data.subtitle}
-                                    onChange={(e) => setData({ ...data, subtitle: e.target.value })}
-                                    className="text-center text-xl text-primary bg-transparent border-primary/30"
-                                />
+                    {/* Content Container to push footer down */}
+                    <div className="flex-1">
+                        {/* Header */}
+                        <div className="flex justify-between items-center border-b-2 border-primary pb-5 mb-10 print:border-black">
+                            <div>
+                                <h1 className="font-[Orbitron] text-primary text-2xl tracking-wide font-bold print:text-black">ASTRO POLICE</h1>
+                                <p className="text-[#888] tracking-[0.2em] text-xs uppercase print:text-gray-600">Academia de Polícia • Divisão {manualId?.toUpperCase()}</p>
                             </div>
-                        ) : (
-                            <>
-                                <h1 className="font-[Orbitron] text-4xl font-bold text-white mb-2 print:text-black">{data.title}</h1>
-                                <p className="text-primary text-xl uppercase tracking-widest print:text-black">{data.subtitle}</p>
-                            </>
-                        )}
-                    </div>
+                            <div className="font-[Orbitron] bg-primary/10 text-primary px-4 py-1 border border-primary rounded text-sm print:border-black print:text-black print:bg-transparent">
+                                MANUAL OFICIAL v3.0
+                            </div>
+                        </div>
 
-                    {/* Modules */}
-                    <div className="space-y-8">
-                        {data.modules.map((module, index) => (
-                            <div key={index}>
-                                {isEditing ? (
-                                    <div className="p-4 border border-white/10 rounded-lg bg-black/20 mb-8 relative group">
-                                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Button variant="destructive" size="icon" onClick={() => {
-                                                const newModules = data.modules.filter((_, i) => i !== index);
-                                                setData({ ...data, modules: newModules });
-                                            }}>
-                                                <span className="sr-only">Remover</span>
-                                                X
-                                            </Button>
-                                        </div>
-                                        <div className="flex items-center gap-4 mb-4">
-                                            <span className="font-[Orbitron] text-secondary text-2xl opacity-50">#{index + 1}</span>
-                                            <Input
-                                                value={module.title}
-                                                onChange={(e) => handleModuleChange(index, 'title', e.target.value)}
-                                                className="bg-transparent border-white/20 font-bold text-lg"
-                                                placeholder="Título do Módulo"
+                        {/* Title */}
+                        <div className="text-center mb-12">
+                            {isEditing ? (
+                                <div className="space-y-4">
+                                    <Input
+                                        value={data.title}
+                                        onChange={(e) => setData({ ...data, title: e.target.value })}
+                                        className="text-center text-3xl font-[Orbitron] font-bold bg-transparent border-primary/50 h-auto py-2"
+                                    />
+                                    <Input
+                                        value={data.subtitle}
+                                        onChange={(e) => setData({ ...data, subtitle: e.target.value })}
+                                        className="text-center text-xl text-primary bg-transparent border-primary/30"
+                                    />
+                                </div>
+                            ) : (
+                                <>
+                                    <h1 className="font-[Orbitron] text-4xl font-bold text-white mb-2 print:text-black">{data.title}</h1>
+                                    <p className="text-primary text-xl uppercase tracking-widest print:text-black">{data.subtitle}</p>
+                                </>
+                            )}
+                        </div>
+
+                        {/* Modules */}
+                        <div className="space-y-8">
+                            {data.modules.map((module, index) => (
+                                <div key={index}>
+                                    {isEditing ? (
+                                        <div className="p-4 border border-white/10 rounded-lg bg-black/20 mb-8 relative group">
+                                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <Button variant="destructive" size="icon" onClick={() => {
+                                                    const newModules = data.modules.filter((_, i) => i !== index);
+                                                    setData({ ...data, modules: newModules });
+                                                }}>
+                                                    <span className="sr-only">Remover</span>
+                                                    X
+                                                </Button>
+                                            </div>
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <span className="font-[Orbitron] text-secondary text-2xl opacity-50">#{index + 1}</span>
+                                                <Input
+                                                    value={module.title}
+                                                    onChange={(e) => handleModuleChange(index, 'title', e.target.value)}
+                                                    className="bg-transparent border-white/20 font-bold text-lg"
+                                                    placeholder="Título do Módulo"
+                                                />
+                                            </div>
+                                            <Textarea
+                                                value={module.content}
+                                                onChange={(e) => handleModuleChange(index, 'content', e.target.value)}
+                                                className="bg-transparent border-white/20 min-h-[150px] font-sans leading-relaxed"
+                                                placeholder="Use **negrito**, - lista, [INFO] ou [WARNING] para formatar..."
                                             />
+                                            <p className="text-xs text-muted-foreground mt-2 text-right">
+                                                Suporta: <strong>**negrito**</strong>, <span className="text-primary">- lista</span>, [INFO], [WARNING]
+                                            </p>
                                         </div>
-                                        <Textarea
-                                            value={module.content}
-                                            onChange={(e) => handleModuleChange(index, 'content', e.target.value)}
-                                            className="bg-transparent border-white/20 min-h-[150px] font-sans leading-relaxed"
-                                            placeholder="Use **negrito**, - lista, [INFO] ou [WARNING] para formatar..."
-                                        />
-                                        <p className="text-xs text-muted-foreground mt-2 text-right">
-                                            Suporta: <strong>**negrito**</strong>, <span className="text-primary">- lista</span>, [INFO], [WARNING]
-                                        </p>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <h2 className="font-[Orbitron] text-white text-2xl border-l-4 border-secondary pl-4 mb-6 flex items-center print:text-black print:border-black">
-                                            <span className="text-secondary opacity-70 mr-4 text-3xl print:text-black">0{index + 1}</span>
-                                            {module.title}
-                                        </h2>
-                                        <div className="pl-4 print:text-black">
-                                            {renderContent(module.content)}
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+                                    ) : (
+                                        <>
+                                            <h2 className="font-[Orbitron] text-white text-2xl border-l-4 border-secondary pl-4 mb-6 flex items-center print:text-black print:border-black">
+                                                <span className="text-secondary opacity-70 mr-4 text-3xl print:text-black">0{index + 1}</span>
+                                                {module.title}
+                                            </h2>
+                                            <div className="pl-4 print:text-black">
+                                                {renderContent(module.content)}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
 
-                    {isEditing && (
-                        <Button variant="outline" className="w-full mt-8 border-dashed border-primary/30 hover:border-primary text-primary" onClick={() => setData({ ...data, modules: [...data.modules, { title: "Novo Módulo", content: "" }] })}>
-                            + Adicionar Módulo
-                        </Button>
-                    )}
+                        {isEditing && (
+                            <Button variant="outline" className="w-full mt-8 border-dashed border-primary/30 hover:border-primary text-primary" onClick={() => setData({ ...data, modules: [...data.modules, { title: "Novo Módulo", content: "" }] })}>
+                                + Adicionar Módulo
+                            </Button>
+                        )}
 
-                    {/* Official Seal */}
-                    <div className="mt-12 text-center opacity-50 flex flex-col items-center justify-center print:opacity-100">
-                        <img src="/img/logo.png" alt="Astro Police Logo" className="w-24 h-auto filter grayscale print:filter-none mb-3" />
-                        <p className="text-[10px] uppercase font-[Orbitron] tracking-widest text-muted-foreground print:text-gray-500">
-                            Aprovado pelo Comando Geral
-                        </p>
+                        {/* Official Seal */}
+                        <div className="mt-16 mb-8 text-center opacity-70 flex flex-col items-center justify-center print:opacity-100">
+                            <img src="/img/logo.png" alt="Astro Police Logo" className="w-20 h-auto filter grayscale print:filter-none mb-2" />
+                            <p className="text-[10px] uppercase font-[Orbitron] tracking-[0.2em] text-muted-foreground print:text-gray-500">
+                                Aprovado pelo Comando Geral
+                            </p>
+                        </div>
                     </div>
 
                     {/* Footer */}
-                    <div className="absolute bottom-[20mm] left-[20mm] right-[20mm] border-t border-[#333] pt-4 flex justify-between text-xs text-[#666] font-[Orbitron] print:bottom-0 print:left-0 print:right-0 print:border-black print:text-black">
+                    <div className="w-full border-t border-[#333] pt-4 flex justify-between text-xs text-[#666] font-[Orbitron] print:border-black print:text-black mt-auto">
                         <span>ASTRO POLICE DEPT.</span>
                         <span>DOCUMENTO CONFIDENCIAL • ACESSO RESTRITO</span>
                     </div>
