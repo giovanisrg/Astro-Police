@@ -127,7 +127,7 @@ export const INITIAL_CURSOS_GUARNICAO: Curso[] = [
             "Treino de reação sob estresse"
         ],
         cargaHoraria: "Especialização",
-        pdf: "/pdfs/swat.pdf",
+        pdf: "/manual/swat",
         nivel: "Entrada",
         minLevel: 1,
         guarnicao: "SWAT" // Curso da guarnição SWAT
@@ -145,7 +145,7 @@ export const INITIAL_CURSOS_GUARNICAO: Curso[] = [
             "Comunicação em deslocamento"
         ],
         cargaHoraria: "Especialização",
-        pdf: "/pdfs/gtm.pdf",
+        pdf: "/manual/gtm",
         nivel: "Entrada",
         minLevel: 1,
         guarnicao: "GTM" // Curso da guarnição GTM
@@ -163,7 +163,7 @@ export const INITIAL_CURSOS_GUARNICAO: Curso[] = [
             "Decisão de abortar perseguição"
         ],
         cargaHoraria: "Especialização",
-        pdf: "/pdfs/speed.pdf",
+        pdf: "/manual/speed",
         nivel: "Entrada",
         minLevel: 1,
         guarnicao: "SPEED" // Curso da guarnição SPEED
