@@ -48,6 +48,18 @@ export function Header({ enrollmentStatus = 'aberto' }: { enrollmentStatus?: 'ab
                         </a>
                     </Link>
 
+                    {/* DEBUG PANEL - REMOVE DEPOIS */}
+                    {user && (
+                        <div className="hidden lg:block p-2 bg-black/80 text-[10px] text-green-400 font-mono border border-green-900 absolute top-16 left-4 z-50 max-w-md overflow-auto max-h-40 pointer-events-none">
+                            <p><strong>Username:</strong> {user.username}</p>
+                            <p><strong>Rank:</strong> {user.rank} (Level: {user.level})</p>
+                            <p><strong>Instructor:</strong> {user.instructorType}</p>
+                            <p><strong>Discord Roles:</strong></p>
+                            <div className="break-all">{user.discordRoles.join(', ')}</div>
+                        </div>
+                    )}
+
+
                     {/* Navigation Buttons */}
                     <nav className="hidden md:flex items-center gap-2">
                         <Link href="/">
