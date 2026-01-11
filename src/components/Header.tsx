@@ -50,12 +50,13 @@ export function Header({ enrollmentStatus = 'aberto' }: { enrollmentStatus?: 'ab
 
                     {/* DEBUG PANEL - REMOVE DEPOIS */}
                     {user && (
-                        <div className="hidden lg:block p-2 bg-black/80 text-[10px] text-green-400 font-mono border border-green-900 absolute top-16 left-4 z-50 max-w-md overflow-auto max-h-40 pointer-events-none">
-                            <p><strong>Username:</strong> {user.username}</p>
+                        <div className="hidden lg:block p-2 bg-black/80 text-[10px] text-green-400 font-mono border border-green-900 absolute top-16 left-4 z-50 max-w-md overflow-auto max-h-60 pointer-events-none">
+                            <p><strong>User:</strong> {user.username}</p>
+                            <p><strong>Target Server ID:</strong> {ROLE_CONFIG.DISCORD_SERVER_ID}</p>
+                            <p><strong>Is Member?</strong> {user.memberOfDiscord ? '✅ YES' : '❌ NO (Server Mismatch?)'}</p>
                             <p><strong>Rank:</strong> {user.rank} (Level: {user.level})</p>
-                            <p><strong>Instructor:</strong> {user.instructorType}</p>
-                            <p><strong>Discord Roles:</strong></p>
-                            <div className="break-all">{user.discordRoles.join(', ')}</div>
+                            <p><strong>Roles Detected:</strong> [{user.discordRoles.length}]</p>
+                            <div className="break-all text-[9px]">{user.discordRoles.join(', ') || 'Nenhum'}</div>
                         </div>
                     )}
 
