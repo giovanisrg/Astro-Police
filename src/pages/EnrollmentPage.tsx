@@ -327,7 +327,7 @@ export default function EnrollmentPage() {
                                             <img
                                                 src={infoRecrutamento.fotoMasculino}
                                                 alt="Fardamento Masculino"
-                                                className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                                                className="w-full h-full object-contain transition-transform group-hover:scale-105"
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end justify-center p-2">
                                                 <span className="text-white font-medium text-sm">Masculino</span>
@@ -349,7 +349,7 @@ export default function EnrollmentPage() {
                                             <img
                                                 src={infoRecrutamento.fotoFeminino}
                                                 alt="Fardamento Feminino"
-                                                className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                                                className="w-full h-full object-contain transition-transform group-hover:scale-105"
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end justify-center p-2">
                                                 <span className="text-white font-medium text-sm">Feminino</span>
