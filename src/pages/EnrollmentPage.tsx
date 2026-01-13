@@ -323,14 +323,18 @@ export default function EnrollmentPage() {
                                 <div className="grid grid-cols-2 gap-4">
                                     {/* Masculino */}
                                     <div className="space-y-2">
-                                        <div className="aspect-[3/4] rounded-lg overflow-hidden border border-border relative bg-black/20 group">
+                                        <div className="aspect-[3/4] rounded-lg overflow-hidden border border-border relative bg-black/20 group flex items-center justify-center">
                                             <img
                                                 src={infoRecrutamento.fotoMasculino}
                                                 alt="Fardamento Masculino"
                                                 className="w-full h-full object-contain transition-transform group-hover:scale-105"
+                                                onError={(e) => {
+                                                    e.currentTarget.src = 'https://placehold.co/300x400/1a1a1a/666666?text=Sem+Imagem';
+                                                    e.currentTarget.className = "w-full h-full object-cover opacity-50";
+                                                }}
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end justify-center p-2">
-                                                <span className="text-white font-medium text-sm">Masculino</span>
+                                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2 text-center">
+                                                <span className="text-white font-bold text-sm drop-shadow-md">Masculino</span>
                                             </div>
                                         </div>
                                         {isEditingInfo && (
@@ -345,14 +349,18 @@ export default function EnrollmentPage() {
 
                                     {/* Feminino */}
                                     <div className="space-y-2">
-                                        <div className="aspect-[3/4] rounded-lg overflow-hidden border border-border relative bg-black/20 group">
+                                        <div className="aspect-[3/4] rounded-lg overflow-hidden border border-border relative bg-black/20 group flex items-center justify-center">
                                             <img
                                                 src={infoRecrutamento.fotoFeminino}
                                                 alt="Fardamento Feminino"
                                                 className="w-full h-full object-contain transition-transform group-hover:scale-105"
+                                                onError={(e) => {
+                                                    e.currentTarget.src = 'https://placehold.co/300x400/1a1a1a/666666?text=Sem+Imagem';
+                                                    e.currentTarget.className = "w-full h-full object-cover opacity-50";
+                                                }}
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end justify-center p-2">
-                                                <span className="text-white font-medium text-sm">Feminino</span>
+                                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2 text-center">
+                                                <span className="text-white font-bold text-sm drop-shadow-md">Feminino</span>
                                             </div>
                                         </div>
                                         {isEditingInfo && (
