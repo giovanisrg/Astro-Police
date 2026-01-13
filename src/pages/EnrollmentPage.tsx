@@ -327,7 +327,7 @@ export default function EnrollmentPage() {
                                             <img
                                                 src={infoRecrutamento.fotoMasculino}
                                                 alt="Fardamento Masculino"
-                                                className="w-full h-full object-contain transition-transform group-hover:scale-105"
+                                                className="w-full h-full object-cover object-top transition-transform group-hover:scale-105"
                                                 onError={(e) => {
                                                     e.currentTarget.src = 'https://placehold.co/300x400/1a1a1a/666666?text=Sem+Imagem';
                                                     e.currentTarget.className = "w-full h-full object-cover opacity-50";
@@ -353,7 +353,7 @@ export default function EnrollmentPage() {
                                             <img
                                                 src={infoRecrutamento.fotoFeminino}
                                                 alt="Fardamento Feminino"
-                                                className="w-full h-full object-contain transition-transform group-hover:scale-105"
+                                                className="w-full h-full object-cover object-top transition-transform group-hover:scale-105"
                                                 onError={(e) => {
                                                     e.currentTarget.src = 'https://placehold.co/300x400/1a1a1a/666666?text=Sem+Imagem';
                                                     e.currentTarget.className = "w-full h-full object-cover opacity-50";
