@@ -153,7 +153,7 @@ function CursoCard({ curso, isEditing, onEdit, onDelete }: CursoCardProps) {
                   onClick={() => window.open(curso.pdf, '_blank')}
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  PDF
+                  Arquivo
                 </Button>
               ) : (
                 // Se não pode baixar (não é instrutor DESTE curso), mostra opção de matrícula
