@@ -496,7 +496,7 @@ export default function EnrollmentPage() {
                                             variant="secondary"
                                             onClick={() => handleDownload(material.pdf)}
                                         >
-                                            Baixar PDF
+                                            Baixar Arquivo
                                             <Download className="w-4 h-4 ml-2 group-hover/btn:translate-y-1 transition-transform" />
                                         </Button>
                                     </CardContent>
