@@ -87,6 +87,11 @@ export const ROLE_CONFIG = {
             id: "1455328435965792519",
             nome: "Sub-Comando",
             level: 4 // Vê tudo
+        },
+        {
+            id: "1455328434237472920",
+            nome: "Comando",
+            level: 4 // Vê tudo
         }
     ],
 
