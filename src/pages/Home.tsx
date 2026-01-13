@@ -258,9 +258,33 @@ export default function Home() {
         return;
       }
 
-      // Distribute courses
-      const obrigatorios = data.filter(c => c.tipo === 'obrigatorio').map(mapDbToCurso);
-      const guarnicao = data.filter(c => c.tipo === 'guarnicao').map(mapDbToCurso);
+      // Distribute and Sort courses
+      // Ordem fixa solicitada: CBF -> CAPE -> Liderança -> Oficial -> Alto Comando
+      const ORDER_IDS = ['cbf', 'cape', 'lideranca', 'oficial', 'alto_comando'];
+
+      const obrigatorios = data
+        .filter(c => c.tipo === 'obrigatorio')
+        .map(mapDbToCurso)
+        .sort((a, b) => {
+          const idxA = ORDER_IDS.indexOf(a.id);
+          const idxB = ORDER_IDS.indexOf(b.id);
+
+          // Se ambos estiverem na lista fixa
+          if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+
+          // Se apenas um estiver na lista fixa, ele vem primeiro
+          if (idxA !== -1) return -1;
+          if (idxB !== -1) return 1;
+
+          // Se nenhum estiver na lista (cursos novos), ordena por Nível
+          return a.minLevel - b.minLevel;
+        });
+
+      // Guarnição pode ordenar por nível ou nome
+      const guarnicao = data
+        .filter(c => c.tipo === 'guarnicao')
+        .map(mapDbToCurso)
+        .sort((a, b) => a.minLevel - b.minLevel);
 
       setCursosObrigatorios(obrigatorios);
       setCursosGuarnicao(guarnicao);
