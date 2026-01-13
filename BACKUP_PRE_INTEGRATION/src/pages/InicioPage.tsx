@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Shield, Edit } from "lucide-react";
-import { useState } from "react";
+import { Edit } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,12 +9,81 @@ import { Header } from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import { BannerData, INITIAL_BANNER_DATA } from "@/data/initialData";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 export default function InicioPage() {
     const [, setLocation] = useLocation();
     const { user } = useAuth();
+    console.log("AstroPolice Version: Banner Fix 2.0"); // Debug Log for User
+
+    // State initialized with original data (Safe Default)
     const [bannerData, setBannerData] = useState<BannerData>(INITIAL_BANNER_DATA);
+
     const [isEditingBanner, setIsEditingBanner] = useState(false);
+
+    // --- SUPABASE SYNC LOGIC ---
+    useEffect(() => {
+        // 1. Fetch Initial Data with Auto-Seed
+        const fetchBanner = async () => {
+            const { data, error: _error } = await supabase
+                .from('app_settings')
+                .select('value')
+                .eq('key', 'banner_home')
+                .single();
+
+            if (data?.value && data.value.status) {
+                setBannerData(data.value);
+            } else {
+                // DB data is invalid or missing -> Force Auto-Seed
+                console.log("Banner config missing or invalid. Auto-seeding...");
+                await supabase.from('app_settings').upsert({
+                    key: 'banner_home',
+                    value: INITIAL_BANNER_DATA,
+                    updated_at: new Date().toISOString()
+                });
+                // Ensure UI shows default
+                setBannerData(INITIAL_BANNER_DATA);
+            }
+        };
+
+        fetchBanner();
+
+        // 2. Subscribe to Realtime Changes
+        const subscription = supabase
+            .channel('app_settings_changes')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'app_settings', filter: "key=eq.banner_home" }, (payload) => {
+                const newData = payload.new.value;
+                setBannerData(newData);
+            })
+            .subscribe();
+
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, []);
+
+    // 3. Save Function
+    const handleSave = async (newData: BannerData) => {
+        // Optimistic UI Update
+        setBannerData(newData);
+        setIsEditingBanner(false);
+
+        try {
+            const { error } = await supabase
+                .from('app_settings')
+                .upsert({
+                    key: 'banner_home',
+                    value: newData,
+                    updated_at: new Date().toISOString()
+                });
+
+            if (error) throw error;
+            toast.success("Banner atualizado globalmente!");
+        } catch (error) {
+            console.error(error);
+            toast.error("Erro ao salvar no banco de dados.");
+        }
+    };
 
     return (
         <div className="min-h-screen pt-16">
@@ -31,7 +100,7 @@ export default function InicioPage() {
                     {/* Seção Institucional - Propósitos */}
                     <div className="max-w-4xl mx-auto text-center space-y-8 mb-12">
                         <div className="inline-flex items-center gap-3">
-                            <Shield className="w-16 h-16 text-primary glow" />
+                            <img src="/img/mission_icon.png" alt="Mission Shield" className="w-24 h-24 object-contain" />
                         </div>
                         <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
                             Nossa Missão em AstroRP
@@ -71,11 +140,15 @@ export default function InicioPage() {
                                     className="absolute top-4 right-4 border-primary/50 bg-background/80 backdrop-blur"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setIsEditingBanner(!isEditingBanner);
+                                        if (isEditingBanner) {
+                                            handleSave(bannerData); // Salvar ao clicar no botão
+                                        } else {
+                                            setIsEditingBanner(true);
+                                        }
                                     }}
                                 >
                                     <Edit className="w-4 h-4 mr-2" />
-                                    {isEditingBanner ? 'Salvar' : 'Editar'}
+                                    {isEditingBanner ? 'Salvar Alterações' : 'Editar Banner'}
                                 </Button>
                             )}
 
@@ -97,6 +170,12 @@ export default function InicioPage() {
                                                         ...newData,
                                                         titulo: "INSCRIÇÕES ENCERRADAS",
                                                         subtitulo: "Não há vagas disponíveis no momento. Novas inscrições serão divulgadas por meio dos canais oficiais do discord AstroRP. https://discord.gg/AstroRP"
+                                                    };
+                                                } else {
+                                                    newData = {
+                                                        ...newData,
+                                                        titulo: "INSCRIÇÕES ABERTAS",
+                                                        subtitulo: "Venha fazer parte da elite da Astro Police. Sua jornada começa aqui."
                                                     };
                                                 }
 
@@ -166,7 +245,7 @@ export default function InicioPage() {
                 <div className="container">
                     <div className="flex flex-col items-center gap-4">
                         <div className="flex items-center gap-3">
-                            <Shield className="w-8 h-8 text-primary" />
+                            <img src="/img/logo.png" alt="Astro Police" className="w-10 h-10 object-contain" />
                             <span className="text-xl font-bold text-foreground">ASTRO POLICE</span>
                         </div>
                         <p className="text-sm text-muted-foreground text-center">

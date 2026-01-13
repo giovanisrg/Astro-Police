@@ -171,46 +171,28 @@ export function CourseEditorModal({ cursoToEdit, defaultGuarnicao, onClose, onSa
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Arquivo PDF do Curso</Label>
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex items-center gap-2">
+                                    <Label>Link do PDF (Discord/Drive)</Label>
+                                    <div className="flex gap-2">
+                                        <div className="relative flex-1">
+                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                                                <Upload className="w-4 h-4" />
+                                            </div>
                                             <Input
-                                                id="pdf-upload"
-                                                type="file"
-                                                accept=".pdf"
-                                                className="hidden"
-                                                onChange={(e) => {
-                                                    const file = e.target.files?.[0];
-                                                    if (file) {
-                                                        const fakeUrl = URL.createObjectURL(file);
-                                                        setFormData({ ...formData, pdf: fakeUrl });
-                                                        toast.success(`PDF "${file.name}" carregado temporariamente for sessao.`);
-                                                    }
-                                                }}
+                                                value={formData.pdf === '#' ? '' : formData.pdf}
+                                                onChange={e => setFormData({ ...formData, pdf: e.target.value })}
+                                                placeholder="https://..."
+                                                className="pl-9 bg-secondary/50"
                                             />
-                                            <Button
-                                                variant="outline"
-                                                onClick={() => document.getElementById('pdf-upload')?.click()}
-                                                className="w-full border-dashed border-primary/40 text-primary hover:bg-primary/10"
-                                            >
-                                                <Upload className="w-4 h-4 mr-2" />
-                                                {formData.pdf && formData.pdf !== '#' ? "Trocar PDF" : "Subir PDF"}
-                                            </Button>
                                         </div>
                                         {formData.pdf && formData.pdf !== '#' && (
-                                            <div className="flex items-center justify-between text-xs bg-green-500/10 text-green-500 p-2 rounded border border-green-500/20">
-                                                <span className="truncate max-w-[200px]">PDF Configurado</span>
-                                                <div className="flex gap-1">
-                                                    <Button size="icon" variant="ghost" className="h-4 w-4" onClick={() => window.open(formData.pdf, '_blank')}>
-                                                        <FileText className="w-3 h-3" />
-                                                    </Button>
-                                                    <Button size="icon" variant="ghost" className="h-4 w-4 text-red-400 hover:text-red-500" onClick={() => setFormData({ ...formData, pdf: '#' })}>
-                                                        <X className="w-3 h-3" />
-                                                    </Button>
-                                                </div>
-                                            </div>
+                                            <Button size="icon" variant="ghost" className="shrink-0" onClick={() => window.open(formData.pdf, '_blank')}>
+                                                <FileText className="w-4 h-4 text-primary" />
+                                            </Button>
                                         )}
                                     </div>
+                                    <p className="text-[10px] text-muted-foreground pt-1">
+                                        Hospede o PDF no Discord ou Google Drive e cole o link aqui.
+                                    </p>
                                 </div>
                             </div>
 

@@ -5,7 +5,7 @@
  * - Tipografia: Orbitron (display), Inter (body)
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -67,14 +67,32 @@ function CursoCard({ curso, isEditing, onEdit, onDelete }: CursoCardProps) {
 
 
   // Determinar estado do botão
-  const isInstructor = user ? user.instructorType !== 'none' : false;
+
   const canDownload = canDownloadPDF(curso.guarnicao);
 
   // Specific checks for detailed feedback
-  const isMember = user?.memberOfDiscord;
-  const hasRole = user?.discordRoles.includes(ROLE_CONFIG.ACCESS_ROLE_ID);
+  // Specific checks for detailed feedback
+  let isMember = false;
+  let isAuthorized = false;
+  let hasAccessRole = false;
+  let hasAnyRank = false;
+
+  try {
+    if (user && ROLE_CONFIG && ROLE_CONFIG.PATENTES) {
+      isMember = !!user.memberOfDiscord;
+      const roles = user.discordRoles || [];
+
+      hasAccessRole = roles.includes(ROLE_CONFIG.ACCESS_ROLE_ID);
+      hasAnyRank = ROLE_CONFIG.PATENTES.some(p => roles.includes(p.id));
+      isAuthorized = hasAccessRole || hasAnyRank;
+    }
+  } catch (err) {
+    console.error("Erro ao verificar permissões:", err);
+  }
+
   const hasLevel = (user?.level ?? 0) >= curso.minLevel;
-  const canEnrollInCourse = isMember && hasRole && hasLevel;
+
+  const canEnrollInCourse = isMember && isAuthorized && hasLevel;
 
   return (
     <>
@@ -127,31 +145,18 @@ function CursoCard({ curso, isEditing, onEdit, onDelete }: CursoCardProps) {
                 <span>{curso.cargaHoraria}</span>
               </div>
 
-              {/* Botão Condicional: PDF para Instrutores, Matricular-se para Alunos */}
-              {isInstructor ? (
-                // Instrutor: Botão PDF (habilitado ou desabilitado)
-                canDownload ? (
-                  <Button
-                    size="sm"
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground glow-hover"
-                    onClick={() => window.open(curso.pdf, '_blank')}
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    PDF
-                  </Button>
-                ) : (
-                  <Button
-                    size="sm"
-                    disabled
-                    variant="outline"
-                    className="cursor-not-allowed"
-                  >
-                    <Lock className="w-4 h-4 mr-2" />
-                    PDF Restrito
-                  </Button>
-                )
+              {/* Botão Dinâmico: PDF se for instrutor DO CURSO, senão Matricular-se */}
+              {canDownload ? (
+                <Button
+                  size="sm"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground glow-hover"
+                  onClick={() => window.open(curso.pdf, '_blank')}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  PDF
+                </Button>
               ) : (
-                // Aluno: Botão Matricular-se (habilitado ou desabilitado)
+                // Se não pode baixar (não é instrutor DESTE curso), mostra opção de matrícula
                 canEnrollInCourse ? (
                   <Button
                     size="sm"
@@ -181,7 +186,7 @@ function CursoCard({ curso, isEditing, onEdit, onDelete }: CursoCardProps) {
       {/* Modal de Matrícula */}
       {showEnrollment && (
         <EnrollmentModal
-          curso={{ id: curso.id, nome: curso.nome }}
+          curso={{ id: curso.id, nome: curso.nome, guarnicao: curso.guarnicao }}
           onClose={() => setShowEnrollment(false)}
         />
       )}
@@ -194,12 +199,28 @@ function CursoCard({ curso, isEditing, onEdit, onDelete }: CursoCardProps) {
 
 
 
+import { supabase } from "@/lib/supabase";
+
+// Helper: Map DB snake_case columns to App camelCase interface
+const mapDbToCurso = (dbRow: any): Curso => ({
+  id: dbRow.id,
+  nome: dbRow.nome,
+  descricao: dbRow.descricao,
+  modulos: dbRow.modulos || [],
+  cargaHoraria: dbRow.carga_horaria,
+  pdf: dbRow.pdf_url,
+  minLevel: dbRow.min_level,
+  progressao: dbRow.progressao,
+  guarnicao: dbRow.guarnicao_tag as any,
+  nivel: dbRow.min_level === 0 ? "Básico" : "Avançado" // Derived for UI
+});
+
 export default function Home() {
   const { user } = useAuth();
 
   // Data States
-  const [cursosObrigatorios, setCursosObrigatorios] = useState<Curso[]>(INITIAL_CURSOS_OBRIGATORIOS);
-  const [cursosGuarnicao, setCursosGuarnicao] = useState<Curso[]>(INITIAL_CURSOS_GUARNICAO);
+  const [cursosObrigatorios, setCursosObrigatorios] = useState<Curso[]>([]);
+  const [cursosGuarnicao, setCursosGuarnicao] = useState<Curso[]>([]);
 
   // Editing States
   const [isEditing, setIsEditing] = useState(false);
@@ -209,37 +230,112 @@ export default function Home() {
     type: 'obrigatorio'
   });
 
+  // Fetch Data from Supabase
+  const fetchCourses = async () => {
+    try {
+      const { data, error } = await supabase.from('courses').select('*');
+      if (error) throw error;
 
+      // Auto-Seed if empty (Migration Strategy)
+      if (!data || data.length === 0) {
+        console.log("Database empty. Seeding initial data...");
+        const seedData = [
+          ...INITIAL_CURSOS_OBRIGATORIOS.map(c => ({
+            id: c.id, nome: c.nome, descricao: c.descricao, modulos: c.modulos,
+            carga_horaria: c.cargaHoraria, pdf_url: c.pdf, min_level: c.minLevel,
+            progressao: c.progressao, tipo: 'obrigatorio'
+          })),
+          ...INITIAL_CURSOS_GUARNICAO.map(c => ({
+            id: c.id, nome: c.nome, descricao: c.descricao, modulos: c.modulos,
+            carga_horaria: c.cargaHoraria, pdf_url: c.pdf, min_level: c.minLevel,
+            progressao: c.progressao, tipo: 'guarnicao', guarnicao_tag: c.guarnicao
+          }))
+        ];
+
+        const { error: seedError } = await supabase.from('courses').insert(seedData);
+        if (seedError) console.error("Error seeding:", seedError);
+        else fetchCourses(); // Retry fetch after seed
+        return;
+      }
+
+      // Distribute courses
+      const obrigatorios = data.filter(c => c.tipo === 'obrigatorio').map(mapDbToCurso);
+      const guarnicao = data.filter(c => c.tipo === 'guarnicao').map(mapDbToCurso);
+
+      setCursosObrigatorios(obrigatorios);
+      setCursosGuarnicao(guarnicao);
+
+    } catch (err) {
+      console.error("Error fetching courses:", err);
+      toast.error("Erro ao carregar cursos.");
+    }
+  };
+
+  useEffect(() => {
+    fetchCourses();
+
+    // Subscribe to realtime changes
+    // Subscribe to realtime changes
+    const channel = supabase.channel('courses_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'courses' }, (payload) => {
+        console.log("Realtime update received:", payload);
+        toast.info("Lista de cursos atualizada!");
+        fetchCourses();
+      })
+      .subscribe((status) => {
+        console.log("Supabase Realtime Status:", status);
+      });
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   // CRUD Handlers
   const openEditor = (curso: Curso | null, type: 'obrigatorio' | 'guarnicao') => {
     setEditorState({ isOpen: true, curso, type });
   };
 
-  const handleSaveCourse = (savedCurso: Curso) => {
-    const { type, curso: originalCurso } = editorState;
+  const handleSaveCourse = async (savedCurso: Curso) => {
+    const { type } = editorState;
 
-    const updateList = (list: Curso[], setList: React.Dispatch<React.SetStateAction<Curso[]>>) => {
-      if (originalCurso) {
-        // Edit
-        setList(list.map(c => c.id === savedCurso.id ? savedCurso : c));
-      } else {
-        // Create
-        setList([...list, savedCurso]);
-      }
+    // Prepare Payload for DB
+    const dbPayload = {
+      id: savedCurso.id,
+      nome: savedCurso.nome,
+      descricao: savedCurso.descricao,
+      modulos: savedCurso.modulos,
+      carga_horaria: savedCurso.cargaHoraria,
+      pdf_url: savedCurso.pdf,
+      min_level: savedCurso.minLevel,
+      progressao: savedCurso.progressao,
+      tipo: type, // 'obrigatorio' or 'guarnicao'
+      guarnicao_tag: savedCurso.guarnicao
     };
 
-    if (type === 'obrigatorio') updateList(cursosObrigatorios, setCursosObrigatorios);
-    else updateList(cursosGuarnicao, setCursosGuarnicao);
+    try {
+      const { error } = await supabase.from('courses').upsert(dbPayload);
+      if (error) throw error;
 
-    setEditorState(prev => ({ ...prev, isOpen: false }));
+      toast.success("Curso salvo com sucesso!");
+      setEditorState(prev => ({ ...prev, isOpen: false }));
+      fetchCourses(); // Update list immediately
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao salvar curso.");
+    }
   };
 
-  const handleDeleteCourse = (id: string, type: 'obrigatorio' | 'guarnicao') => {
-    if (confirm("Tem certeza que deseja remover este curso?")) {
-      if (type === 'obrigatorio') setCursosObrigatorios(prev => prev.filter(c => c.id !== id));
-      else setCursosGuarnicao(prev => prev.filter(c => c.id !== id));
-      toast.success("Curso removido com sucesso.");
+  const handleDeleteCourse = async (id: string, _type: 'obrigatorio' | 'guarnicao') => {
+    if (confirm("Tem certeza que deseja remover este curso? A ação é irreversível.")) {
+      try {
+        const { error } = await supabase.from('courses').delete().eq('id', id);
+        if (error) throw error;
+
+        toast.success("Curso removido.");
+        fetchCourses(); // Update list immediately
+      } catch (err) {
+        console.error(err);
+        toast.error("Erro ao deletar curso.");
+      }
     }
   };
 

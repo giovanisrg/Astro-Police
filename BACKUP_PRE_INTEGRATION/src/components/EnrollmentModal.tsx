@@ -8,10 +8,13 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import type { Rank } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import { getWebhookUrl } from "@/config/webhooks";
 
 interface Curso {
     id: string;
     nome: string;
+    guarnicao?: string;
 }
 
 interface EnrollmentModalProps {
@@ -36,7 +39,7 @@ export function EnrollmentModal({ curso, onClose, onSuccess }: EnrollmentModalPr
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const ranks: Rank[] = ["Recruta", "Soldado", "Sargento", "Subtenente", "Capitão", "Major"];
+    const ranks: Rank[] = ["Civil", "Recruta", "Soldado", "cabo", "Sargento", "Sargento 2", "Sargento 3", "Subtenente", "Tenente 1", "Tenente 2", "Capitão", "Major", "Sub-Comando"];
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -94,23 +97,83 @@ export function EnrollmentModal({ curso, onClose, onSuccess }: EnrollmentModalPr
 
         setIsSubmitting(true);
 
-        // Simular envio (em produção, aqui seria uma chamada API)
-        setTimeout(() => {
-            console.log("Matrícula enviada:", {
-                curso: curso.id,
-                qra: formData.qra,
-                rank: formData.rank,
-                paymentProof: formData.paymentProof?.name,
+        try {
+            // 1. Upload do Comprovante para o Supabase
+            if (!formData.paymentProof) throw new Error("Comprovante faltando");
+
+            const fileExt = formData.paymentProof.name.split('.').pop();
+            const fileName = `${Date.now()}_${formData.qra.replace(/\s/g, '_')}.${fileExt}`;
+            const filePath = `${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('comprovantes')
+                .upload(filePath, formData.paymentProof);
+
+            if (uploadError) throw uploadError;
+
+            // 2. Obter URL pública
+            const { data: { publicUrl } } = supabase.storage
+                .from('comprovantes')
+                .getPublicUrl(filePath);
+
+            // 3. Enviar Webhook para o Discord
+            const webhookUrl = getWebhookUrl(curso.guarnicao);
+
+            if (!webhookUrl || webhookUrl.includes("SEU_WEBHOOK")) {
+                throw new Error("Webhook não configurado corretamente no sistema.");
+            }
+
+            const discordPayload = {
+                content: "📋 **Nova Solicitação de Matrícula**",
+                embeds: [
+                    {
+                        title: `Matrícula: ${curso.nome}`,
+                        color: 3447003, // Azul bonito
+                        fields: [
+                            { name: "👤 QRA", value: formData.qra, inline: true },
+                            { name: "🛡️ Patente", value: formData.rank, inline: true },
+                            { name: "📅 Data", value: new Date().toLocaleDateString('pt-BR'), inline: true },
+                            { name: "🎓 Curso", value: curso.nome }
+                        ],
+                        image: {
+                            url: publicUrl
+                        },
+                        timestamp: new Date().toISOString(),
+                        footer: {
+                            text: "Sistema de Matrículas Astro Police"
+                        }
+                    }
+                ]
+            };
+
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(discordPayload),
             });
 
+            if (!response.ok) {
+                throw new Error("Falha ao enviar notificação para o Discord");
+            }
+
+            // Sucesso!
             toast.success("Matrícula enviada com sucesso! Aguarde aprovação.", {
                 description: `Curso: ${curso.nome}`,
             });
 
-            setIsSubmitting(false);
             if (onSuccess) onSuccess();
             onClose();
-        }, 1500);
+
+        } catch (error: any) {
+            console.error("Erro na matrícula:", error);
+            toast.error("Erro ao enviar matrícula", {
+                description: error.message || "Tente novamente mais tarde."
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (

@@ -108,7 +108,7 @@ export const INITIAL_CURSOS_GUARNICAO: Curso[] = [
             "Procedimentos de emergência"
         ],
         cargaHoraria: "Especialização",
-        pdf: "/pdfs/gra.pdf",
+        pdf: "/manual/gra",
         nivel: "Entrada",
         minLevel: 1, // Soldado+ pode ver especialização
         guarnicao: "GRA" // Curso da guarnição GRA
@@ -127,7 +127,7 @@ export const INITIAL_CURSOS_GUARNICAO: Curso[] = [
             "Treino de reação sob estresse"
         ],
         cargaHoraria: "Especialização",
-        pdf: "/pdfs/swat.pdf",
+        pdf: "/manual/swat",
         nivel: "Entrada",
         minLevel: 1,
         guarnicao: "SWAT" // Curso da guarnição SWAT
@@ -145,7 +145,7 @@ export const INITIAL_CURSOS_GUARNICAO: Curso[] = [
             "Comunicação em deslocamento"
         ],
         cargaHoraria: "Especialização",
-        pdf: "/pdfs/gtm.pdf",
+        pdf: "/manual/gtm",
         nivel: "Entrada",
         minLevel: 1,
         guarnicao: "GTM" // Curso da guarnição GTM
@@ -163,7 +163,7 @@ export const INITIAL_CURSOS_GUARNICAO: Curso[] = [
             "Decisão de abortar perseguição"
         ],
         cargaHoraria: "Especialização",
-        pdf: "/pdfs/speed.pdf",
+        pdf: "/manual/speed",
         nivel: "Entrada",
         minLevel: 1,
         guarnicao: "SPEED" // Curso da guarnição SPEED
@@ -176,7 +176,8 @@ export const INITIAL_BANNER_DATA: BannerData = {
     status: 'aberto',
     titulo: 'INSCRIÇÕES ABERTAS',
     subtitulo: 'Venha fazer parte da elite da Astro Police. Sua jornada começa aqui.',
-    linkDiscord: 'https://discord.gg/seu-servidor'
+    linkDiscord: 'https://discord.gg/seu-servidor',
+    gifUrl: '/img/banner_terrestre.png'
 };
 
 // Dados Iniciais: Informações de Recrutamento
@@ -213,60 +214,4 @@ export const INITIAL_MATERIAIS_ESTUDO: MaterialEstudo[] = [
 ];
 
 // Dados Iniciais: Instrutores (Página de Instrutores)
-export interface Instrutor {
-    id: string;
-    nome: string;
-    patente: string; // Ex: Capitão, Coronel
-    cargo: 'Geral' | 'GRA' | 'SWAT' | 'GTM' | 'SPEED'; // Categoria
-    avatar: string;
-    bio?: string;
-    status: 'online' | 'offline' | 'ocupado';
-}
 
-export const INITIAL_INSTRUTORES: Instrutor[] = [
-    {
-        id: 'inst-01',
-        nome: 'Capitão Nascimento',
-        patente: 'Capitão',
-        cargo: 'Geral',
-        avatar: 'https://placehold.co/150x150/000/FFF?text=CN',
-        bio: 'Comandante geral da instrução. Especialista em táticas de liderança.',
-        status: 'online'
-    },
-    {
-        id: 'inst-02',
-        nome: 'Tenente Maverick',
-        patente: 'Primeiro Tenente',
-        cargo: 'GRA',
-        avatar: 'https://placehold.co/150x150/1e3a8a/FFF?text=GRA',
-        bio: 'Piloto veterano. Ás dos céus.',
-        status: 'ocupado'
-    },
-    {
-        id: 'inst-03',
-        nome: 'Sargento Foley',
-        patente: 'Sargento',
-        cargo: 'SWAT',
-        avatar: 'https://placehold.co/150x150/3f3f46/FFF?text=SWAT',
-        bio: 'Especialista em CQB e explosivos.',
-        status: 'online'
-    },
-    {
-        id: 'inst-04',
-        nome: 'Cabo Poncherello',
-        patente: 'Cabo',
-        cargo: 'GTM',
-        avatar: 'https://placehold.co/150x150/f59e0b/000?text=GTM',
-        bio: 'Instrutor de pilotagem defensiva e ofensiva.',
-        status: 'offline'
-    },
-    {
-        id: 'inst-05',
-        nome: 'Soldado Driver',
-        patente: 'Soldado',
-        cargo: 'SPEED',
-        avatar: 'https://placehold.co/150x150/dc2626/FFF?text=SPD',
-        bio: 'Perito em interceptação de alta velocidade.',
-        status: 'online'
-    }
-];

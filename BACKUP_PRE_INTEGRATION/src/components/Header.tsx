@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { useAuth, Rank, InstructorType } from "@/contexts/AuthContext";
-import { Shield, LogIn, LogOut, GraduationCap, Users } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { LogIn, LogOut, GraduationCap } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import {
@@ -11,16 +11,13 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { INITIAL_BANNER_DATA, INITIAL_INSTRUTORES } from "@/data/initialData";
+
 import { Badge } from "@/components/ui/badge";
 
 import { ROLE_CONFIG } from "@/config/roles";
 
 export function Header({ enrollmentStatus = 'aberto' }: { enrollmentStatus?: 'aberto' | 'fechado' }) {
-    const { user, login, logout, simulateRankChange, simulateInstructorChange, simulateJoinDiscord, simulateAddRole, isLoading } = useAuth();
-
-    // Gerar lista de patentes dinamicamente do Config
-    const ranks = ROLE_CONFIG.PATENTES.map(p => p.nome as Rank);
+    const { user, login, logout, isLoading } = useAuth(); // Removed unused simulators
 
     const isEnrollmentLocked = enrollmentStatus === 'fechado' && user?.instructorType !== 'geral';
 
@@ -37,7 +34,7 @@ export function Header({ enrollmentStatus = 'aberto' }: { enrollmentStatus?: 'ab
                     <Link href="/">
                         <a className="flex items-center gap-3 cursor-pointer">
                             <div className="relative">
-                                <Shield className="w-8 h-8 text-primary glow" />
+                                <img src="/img/logo.png" alt="Logo" className="w-12 h-12 object-contain" />
                                 <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full animate-pulse" />
                             </div>
                             <div className="flex flex-col">
@@ -50,6 +47,9 @@ export function Header({ enrollmentStatus = 'aberto' }: { enrollmentStatus?: 'ab
                             </div>
                         </a>
                     </Link>
+
+
+
 
                     {/* Navigation Buttons */}
                     <nav className="hidden md:flex items-center gap-2">
@@ -89,42 +89,49 @@ export function Header({ enrollmentStatus = 'aberto' }: { enrollmentStatus?: 'ab
                         )}
 
 
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/10"
-                                >
-                                    Instrutores
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-64 max-h-[80vh] overflow-y-auto">
 
-                                {['Geral', 'GRA', 'SWAT', 'GTM', 'SPEED'].map((cargo) => {
-                                    const insts = INITIAL_INSTRUTORES.filter(i => i.cargo === cargo);
-                                    if (insts.length === 0) return null;
 
-                                    return (
-                                        <div key={cargo} className="mb-2">
-                                            <div className="bg-secondary/50 px-2 py-1 text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1 flex items-center justify-between">
-                                                <span>{cargo === 'Geral' ? 'Instrutor Geral' : `Instrutor ${cargo}`}</span>
-                                                <Badge variant="outline" className="text-[10px] h-4 px-1 border-primary/20">{insts.length}</Badge>
-                                            </div>
-                                            {insts.map(inst => (
-                                                <div key={inst.id} className="px-3 py-1.5 text-xs hover:bg-muted/50 transition-colors flex items-center gap-2 cursor-default">
-                                                    <div className={`w-1.5 h-1.5 rounded-full ${inst.status === 'online' ? 'bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.5)]' :
-                                                        inst.status === 'ocupado' ? 'bg-yellow-500' : 'bg-slate-500'
-                                                        }`} />
-                                                    <span className="font-medium text-foreground/80">{inst.nome}</span>
-                                                </div>
-                                            ))}
-                                            <DropdownMenuSeparator className="mt-2" />
-                                        </div>
-                                    );
-                                })}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        {/* Botão de Recrutamento - Recrutadores ou Admins */}
+                        {/* Botão de Recrutamento - Recrutadores ou Admins (Geral) */}
+                        {(user?.discordRoles.includes(ROLE_CONFIG.INSTRUTORES.RECRUTADOR) ||
+                            ROLE_CONFIG.INSTRUTORES.GERAL.ids.some(id => user?.discordRoles.includes(id))) && (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/10"
+                                        >
+                                            Recrutamento
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <Link href="/recrutamento/prova">
+                                            <DropdownMenuItem className="cursor-pointer">
+                                                <span className="mr-2">📝</span> Aplicar Prova
+                                            </DropdownMenuItem>
+                                        </Link>
+                                        <Link href="/recrutamento/resultados">
+                                            <DropdownMenuItem className="cursor-pointer">
+                                                <span className="mr-2">📊</span> Resultados
+                                            </DropdownMenuItem>
+                                        </Link>
+
+                                        {/* Apenas Admins podem ver o gerenciador de perguntas */}
+                                        {ROLE_CONFIG.INSTRUTORES.GERAL.ids.some(id => user?.discordRoles.includes(id)) && (
+                                            <>
+                                                <DropdownMenuSeparator />
+                                                <Link href="/recrutamento/perguntas">
+                                                    <DropdownMenuItem className="cursor-pointer">
+                                                        <span className="mr-2">⚙️</span> Gerenciar Perguntas
+                                                    </DropdownMenuItem>
+                                                </Link>
+                                            </>
+                                        )}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            )}
+
                         <Link href="/cursos">
                             <a>
                                 <Button
@@ -168,63 +175,19 @@ export function Header({ enrollmentStatus = 'aberto' }: { enrollmentStatus?: 'ab
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
 
-                                    {/* Simulation Controls - Remove in production */}
-                                    <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider mt-2">
-                                        Simular Acesso Externo
-                                    </DropdownMenuLabel>
-                                    <DropdownMenuItem onClick={simulateJoinDiscord} className={user.memberOfDiscord ? "bg-green-500/10 text-green-500 focus:bg-green-500/20 focus:text-green-500" : ""}>
-                                        <Users className="w-3 h-3 mr-2" />
-                                        {user.memberOfDiscord ? "Membro do Discord (Sim)" : "Entrar no Discord"}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => simulateAddRole(ROLE_CONFIG.ACCESS_ROLE_ID)} className={user.discordRoles.includes(ROLE_CONFIG.ACCESS_ROLE_ID) ? "bg-green-500/10 text-green-500 focus:bg-green-500/20 focus:text-green-500" : ""}>
-                                        <Shield className="w-3 h-3 mr-2" />
-                                        {user.discordRoles.includes(ROLE_CONFIG.ACCESS_ROLE_ID) ? "Cargo Verificado (Sim)" : "Obter Cargo Verificado"}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-
-                                    <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider mt-2">
-                                        Simular Tipo de Usuário
-                                    </DropdownMenuLabel>
-                                    {(['none', 'geral', 'GRA', 'SWAT', 'GTM', 'SPEED'] as InstructorType[]).map((type) => (
-                                        <DropdownMenuItem
-                                            key={type}
-                                            onClick={() => simulateInstructorChange(type)}
-                                            className={user.instructorType === type ? "bg-accent/10 text-accent" : ""}
-                                        >
-                                            <GraduationCap className="w-3 h-3 mr-2" />
-                                            {type === 'none' ? 'Aluno' : type === 'geral' ? 'Instrutor Geral' : `Instrutor ${type}`}
-                                        </DropdownMenuItem>
-                                    ))}
-
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider mt-2">
-                                        Simular Patente
-                                    </DropdownMenuLabel>
-                                    {ranks.map((rank) => (
-                                        <DropdownMenuItem
-                                            key={rank}
-                                            onClick={() => simulateRankChange(rank)}
-                                            className={user.rank === rank ? "bg-primary/10 text-primary" : ""}
-                                        >
-                                            <Shield className="w-3 h-3 mr-2" />
-                                            {rank}
-                                        </DropdownMenuItem>
-                                    ))}
-
-
-
-                                    <DropdownMenuSeparator />
                                     <DropdownMenuItem onClick={() => {
-                                        // Resetar cursos - hack rápido pois não expus setCompletedCourses
-                                        // Idealmente teria um resetProgress() no context, mas vou iterar ou recarregar
+                                        // Limpar cache do Discord e recarregar
+                                        localStorage.removeItem('discord_member_data');
+                                        localStorage.removeItem('discord_member_cache_time');
                                         window.location.reload();
-                                    }} className="text-red-400 focus:text-red-500">
-                                        <LogOut className="w-3 h-3 mr-2" />
-                                        Resetar Progresso (Reload)
+                                    }} className="text-blue-400 focus:text-blue-500 cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M3 21v-5h5" /></svg>
+                                        Atualizar Permissões
                                     </DropdownMenuItem>
 
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem onClick={logout} className="text-red-400 focus:text-red-400">
+
+                                    <DropdownMenuItem onClick={logout} className="text-red-400 focus:text-red-400 cursor-pointer">
                                         <LogOut className="w-4 h-4 mr-2" />
                                         Sair
                                     </DropdownMenuItem>
