@@ -85,7 +85,7 @@ export const ROLE_CONFIG = {
         },
         {
             id: "1455328435965792519",
-            nome: "Sub-Comando",
+            nome: "Tenente Coronel",
             level: 4 // Vê tudo
         },
         {
