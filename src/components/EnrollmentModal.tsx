@@ -39,7 +39,7 @@ export function EnrollmentModal({ curso, onClose, onSuccess }: EnrollmentModalPr
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const ranks: Rank[] = ["Civil", "Recruta", "Soldado", "cabo", "Sargento", "Sargento 2", "Sargento 3", "Subtenente", "Tenente 1", "Tenente 2", "Capitão", "Major", "Tenente Coronel", "Comando"];
+    const ranks: Rank[] = ["Civil", "Recruta", "Soldado", "cabo", "Sargento", "Sargento 2", "Sargento 3", "Subtenente", "Tenente 1", "Tenente 2", "Capitão", "Major", "Coronel", "Comando"];
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
