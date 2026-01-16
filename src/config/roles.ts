@@ -35,8 +35,13 @@ export const ROLE_CONFIG = {
         },
         {
             id: "1455328451421798662", // <--- Coloque o ID do cargo Soldado aqui
-            nome: "Soldado",
+            nome: "1° Soldado",
             level: 1 // Vê cursos de Soldado + Recruta
+        },
+        {
+            id: "1455328451421798662",
+            nome: "2° Soldado",
+            level: 1
         },
         {
             id: "1455328449844482155",
