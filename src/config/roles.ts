@@ -45,17 +45,17 @@ export const ROLE_CONFIG = {
         },
         {
             id: "1455328448217350225",
-            nome: "Sargento",
+            nome: "1° Sargento",
             level: 2
         },
         {
             id: "1455328446245769248",
-            nome: "Sargento 2",
+            nome: "2° Sargento",
             level: 2
         },
         {
             id: "1455328444941598800",
-            nome: "Sargento 3",
+            nome: "3° Sargento",
             level: 2
         },
         {
@@ -65,28 +65,38 @@ export const ROLE_CONFIG = {
         },
         {
             id: "1455328442034815040",
-            nome: "Tenente 1",
+            nome: "1° Tenente",
             level: 3
         },
         {
             id: "1455328440793170166",
-            nome: "Tenente 2",
+            nome: "2° Tenente",
+            level: 3
+        },
+        {
+            id: "1455328443720794203",
+            nome: "Superintendente",
             level: 3
         },
         {
             id: "1455328438901801168",
             nome: "Capitão",
-            level: 4 // Vê tudo
+            level: 4
         },
         {
             id: "1455328437446377482",
             nome: "Major",
-            level: 4 // Vê tudo
+            level: 4
+        },
+        {
+            id: "1461496540635074613",
+            nome: "Tenente Coronel",
+            level: 4
         },
         {
             id: "1455328435965792519",
             nome: "Coronel",
-            level: 4 // Vê tudo
+            level: 4
         },
         {
             id: "1455328434237472920",
