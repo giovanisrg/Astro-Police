@@ -35,12 +35,12 @@ export const ROLE_CONFIG = {
         },
         {
             id: "1455328451421798662", // <--- Coloque o ID do cargo Soldado aqui
-            nome: "1° Soldado",
+            nome: "2° Soldado",
             level: 1 // Vê cursos de Soldado + Recruta
         },
         {
-            id: "1455328451421798662",
-            nome: "2° Soldado",
+            id: "1461494601130053865",
+            nome: "1° Soldado",
             level: 1
         },
         {
@@ -49,7 +49,7 @@ export const ROLE_CONFIG = {
             level: 1
         },
         {
-            id: "1455328448217350225",
+            id: "1455328444941598800",
             nome: "1° Sargento",
             level: 2
         },
@@ -59,23 +59,23 @@ export const ROLE_CONFIG = {
             level: 2
         },
         {
-            id: "1455328444941598800",
+            id: "1455328448217350225",
             nome: "3° Sargento",
             level: 2
         },
         {
-            id: "1455328443720794203",
+            id: "1461496063939837972",
             nome: "Subtenente",
-            level: 3
-        },
-        {
-            id: "1455328442034815040",
-            nome: "1° Tenente",
             level: 3
         },
         {
             id: "1455328440793170166",
             nome: "2° Tenente",
+            level: 3
+        },
+        {
+            id: "1455328442034815040",
+            nome: "1° Tenente",
             level: 3
         },
         {
